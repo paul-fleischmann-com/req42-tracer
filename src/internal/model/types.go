@@ -120,6 +120,19 @@ type TraceabilityGraph struct {
 	Links          []*TraceLink              `json:"links"`
 }
 
+// EmptyGraph returns a TraceabilityGraph with all maps initialised (no nil panics).
+func EmptyGraph() *TraceabilityGraph {
+	return &TraceabilityGraph{
+		Requirements:   make(map[string]*Requirement),
+		ArchElements:   make(map[string]*ArchElement),
+		DesignElements: make(map[string]*DesignElement),
+		TestSpecs:      make(map[string]*TestSpec),
+		TestCodes:      make(map[string]*TestCode),
+		TestResults:    make(map[string]*TestResult),
+		Links:          []*TraceLink{},
+	}
+}
+
 // GapAnalysisResult represents findings from gap analysis.
 type GapAnalysisResult struct {
 	OrphanRequirements      []*Requirement   // Requirements without architecture or test coverage

@@ -16,10 +16,8 @@ type Config struct {
 	Bausteinsicht  struct {
 		Model string `yaml:"model"`
 	} `yaml:"bausteinsicht"`
-	TestResults []struct {
-		Format string `yaml:"format"` // junit, go-test-json
-		Path   string `yaml:"path"`
-	} `yaml:"test-results"`
+	TestResults []TestResultSource `yaml:"test-results"`
+	Plugins     PluginConfig       `yaml:"plugins"`
 	Rules      map[string]string `yaml:"rules"`       // error, warning, off
 	RuleParams map[string]int    `yaml:"rule-params"` // numeric thresholds per rule
 	ASPICE struct {
@@ -39,6 +37,33 @@ type Config struct {
 			Format string `yaml:"format"` // text, markdown, json
 		} `yaml:"cli"`
 	} `yaml:"reports"`
+}
+
+// TestResultSource configures a single test result input.
+type TestResultSource struct {
+	Format     string `yaml:"format"`           // junit, go-test-json, plugin
+	Path       string `yaml:"path"`
+	PluginPath string `yaml:"plugin,omitempty"` // only for format: plugin
+}
+
+// PluginSource configures a single parser plugin with an input file.
+type PluginSource struct {
+	Type       string `yaml:"type"`
+	Path       string `yaml:"path,omitempty"`
+	PluginPath string `yaml:"plugin"`
+}
+
+// PluginConfig holds all plugin configurations grouped by category.
+type PluginConfig struct {
+	Parsers      []PluginSource `yaml:"parsers"`
+	Preprocessors []PluginSource `yaml:"preprocessors"`
+	Enrichers    []PluginSource `yaml:"enrichers"`
+	Validators   []PluginSource `yaml:"validators"`
+	Linkers      []PluginSource `yaml:"linkers"`
+	Reporters    []PluginSource `yaml:"reporters"`
+	CIAdapters   []PluginSource `yaml:"ci_adapters"`
+	SyncAdapters []PluginSource `yaml:"sync_adapters"`
+	Notifiers    []PluginSource `yaml:"notifiers"`
 }
 
 // ProjectConfig represents a single project in the configuration.
