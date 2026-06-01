@@ -1,0 +1,301 @@
+= Plugin Guide
+:toc:
+:toc-title: Contents
+
+== Overview
+
+req42-tracer supports external plugin binaries that extend parsing, validation, and reporting without modifying the core. Plugins communicate via **stdin/stdout JSON** — any language (Python, Bash, Go, Node.js, ...) can implement a plugin.
+
+== Protocol
+
+Every plugin receives a JSON request on stdin and must write a JSON response to stdout:
+
+[source,yaml]
+----
+# Request (all plugin types)
+{ "file": "path/to/input.xml", "project": "software" }
+
+# Response varies by plugin type (see sections below)
+----
+
+*Exit code != 0* → req42-tracer logs a warning and skips the plugin. Execution continues.
+
+*Timeout*: 30 seconds per plugin invocation.
+
+== Configuration (.req42.yaml)
+
+[source,yaml]
+----
+# Test-result plugin (inline with existing test-results section)
+test-results:
+  - format: plugin
+    path: reports/my-results.xml
+    plugin: ./tools/my-test-parser
+
+# All other plugin types
+plugins:
+  parsers:
+    - type: requirement-parser
+      path: docs/requirements.md
+      plugin: ./tools/markdown-req-parser
+    - type: arch-parser
+      path: docs/architecture.puml
+      plugin: ./tools/plantuml-parser
+    - type: test-spec-parser
+      path: exports/testrail.json
+      plugin: ./tools/testrail-parser
+    - type: design-parser
+      path: docs/design.xml
+      plugin: ./tools/design-parser
+  enrichers:
+    - plugin: ./tools/jira-enricher
+  validators:
+    - plugin: ./tools/naming-validator
+  linkers:
+    - plugin: ./tools/keyword-linker
+  reporters:
+    - plugin: ./tools/word-reporter
+  notifiers:
+    - plugin: ./tools/slack-notifier
+----
+
+== Plugin Types
+
+=== test-result-parser
+
+Parses a custom test result file into TestResults.
+
+Request: `{"file": "...", "project": "..."}`
+
+Response:
+[source,json]
+----
+[
+  {
+    "id":        "pkg::TestFoo",
+    "test_name": "TestFoo",
+    "package":   "pkg",
+    "status":    "passed",
+    "duration":  0.042
+  }
+]
+----
+
+`status` values: `passed`, `failed`, `skipped`
+
+If `id` is empty, it is auto-generated as `package::test_name`.
+
+=== requirement-parser
+
+Parses requirements from Markdown, Excel, Word, or any custom format.
+
+Response:
+[source,json]
+----
+[
+  {
+    "id":       "REQ-001",
+    "title":    "System shall ...",
+    "priority": "high",
+    "status":   "approved",
+    "aspice":   "SWE.1"
+  }
+]
+----
+
+=== arch-parser
+
+Parses architecture elements from PlantUML, Draw.io, AUTOSAR ARXML, etc.
+
+Response:
+[source,json]
+----
+[{ "id": "arch.parser", "title": "Parser Component", "type": "component" }]
+----
+
+=== test-spec-parser
+
+Parses test specifications from TestRail, Zephyr, qTest, etc.
+
+Response:
+[source,json]
+----
+[{ "id": "TS-EXT-001", "title": "Login test", "req": ["REQ-001"], "aspice": "SWE.4-BP2" }]
+----
+
+=== design-parser
+
+Parses design elements (SWE.3 DSN level) from custom design documents.
+
+Response:
+[source,json]
+----
+[{ "id": "dsn.auth", "title": "Auth Module", "arch": "arch.core" }]
+----
+
+=== enricher
+
+Annotates existing graph elements with external metadata (JIRA status, CI coverage, etc.).
+
+Request: full TraceabilityGraph JSON
+
+Response:
+[source,json]
+----
+[
+  { "element_id": "REQ-001", "key": "jira_status", "value": "In Progress" },
+  { "element_id": "arch.parser", "key": "ci_coverage", "value": "82.3%" }
+]
+----
+
+=== validator
+
+Applies custom validation rules and returns issues.
+
+Request: full TraceabilityGraph JSON
+
+Response:
+[source,json]
+----
+[
+  {
+    "rule":       "req-naming",
+    "severity":   "error",
+    "element_id": "FEAT-001",
+    "message":    "ID must start with REQ-"
+  }
+]
+----
+
+`severity` values: `error`, `warning`, `info`
+
+=== linker
+
+Creates custom trace links between elements (e.g. keyword-based, AI-based).
+
+Request: full TraceabilityGraph JSON
+
+Response:
+[source,json]
+----
+[
+  {
+    "from_id":   "TestSafety",
+    "from_type": "test-result",
+    "to_id":     "REQ-SAFETY",
+    "to_type":   "requirement",
+    "link_type": "verifies",
+    "reason":    "keyword match"
+  }
+]
+----
+
+=== reporter
+
+Generates custom output files (Word, Excel, DOORS, etc.).
+
+Request: TraceabilityGraph JSON + `{"output_dir": "reports/"}`
+
+Response:
+[source,json]
+----
+{ "files": ["reports/traceability.docx", "reports/matrix.xlsx"] }
+----
+
+=== notifier
+
+Side-effect plugin — called after gap analysis (Slack, Teams, audit log).
+
+Request: gaps/metrics JSON payload
+
+Response: none required. Exit code 0 = success.
+
+== Example Plugins
+
+Ready-to-use example plugins are in `examples/plugins/`:
+
+[cols="1,2,1"]
+|===
+|File |Purpose |Language
+
+|`markdown-req-parser.py`
+|Parses `## REQ-*: Title` blocks from Markdown files
+|Python
+
+|`custom-validator.sh`
+|Enforces REQ-* naming convention on all requirements
+|Bash
+
+|`keyword-linker.py`
+|Links test results to requirements by keyword match in test name
+|Python
+
+|`slack-notifier.sh`
+|Posts gap summary (untraced results, orphan requirements) to Slack webhook
+|Bash
+|===
+
+=== Minimal Bash example (test-result-parser)
+
+[source,bash]
+----
+#!/bin/sh
+# my-test-parser: reads custom XML, outputs TestResults JSON
+# stdin: {"file": "results.xml", "project": "software"}
+# stdout: []TestResult JSON
+
+input=$(cat)
+file=$(echo "$input" | python3 -c "import json,sys; print(json.load(sys.stdin)['file'])")
+
+python3 - <<EOF
+import json, xml.etree.ElementTree as ET
+tree = ET.parse("$file")
+results = []
+for tc in tree.findall('.//testcase'):
+    status = "failed" if tc.find('failure') is not None else "passed"
+    results.append({
+        "test_name": tc.get("name"),
+        "package":   tc.get("classname", ""),
+        "status":    status,
+        "duration":  float(tc.get("time", 0))
+    })
+print(json.dumps(results))
+EOF
+----
+
+== Writing a Plugin in Go
+
+[source,go]
+----
+package main
+
+import (
+    "encoding/json"
+    "os"
+)
+
+type Request struct {
+    File    string `json:"file"`
+    Project string `json:"project"`
+}
+
+type Result struct {
+    ID       string  `json:"id"`
+    TestName string  `json:"test_name"`
+    Package  string  `json:"package"`
+    Status   string  `json:"status"`
+    Duration float64 `json:"duration"`
+}
+
+func main() {
+    var req Request
+    json.NewDecoder(os.Stdin).Decode(&req)
+
+    // ... parse req.File ...
+
+    results := []Result{
+        {TestName: "MyTest", Package: "mypkg", Status: "passed"},
+    }
+    json.NewEncoder(os.Stdout).Encode(results)
+}
+----

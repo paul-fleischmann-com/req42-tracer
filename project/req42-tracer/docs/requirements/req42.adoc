@@ -396,6 +396,75 @@ Acceptance Criteria:
 - Diagnostics are reported for unknown IDs
 - Go-to-Definition works for valid requirement IDs
 
+[req,id=REQ-PLUGIN-001,version=1,priority=medium,aspice=SWE.1,
+ derives=REQ-TESTING-001,
+ status=approved,reviewed-by=paulefl,reviewed-date=2026-06-01]
+== System shall support external plugin binaries for parsing custom formats
+
+[test-spec,id=TS-PLUGIN-001,req=REQ-PLUGIN-001,aspice=SWE.4-BP3]
+====
+Test: plugin runner invokes binary, sends JSON request on stdin, parses JSON response from stdout
+====
+
+The system shall provide a plugin interface that allows external binaries to extend parsing and analysis without modifying the core:
+
+- Plugin communication via stdin/stdout JSON protocol — no CGo, no HTTP
+- Plugin types: `test-result-parser`, `requirement-parser`, `arch-parser`, `test-spec-parser`, `design-parser`
+- Plugin configured in `.req42.yaml` under `plugins.parsers` or `test-results[format=plugin]`
+- Exit code != 0 treated as warning; plugin is skipped, execution continues
+- Timeout of 30 seconds per plugin invocation
+
+Acceptance Criteria:
+- Plugin binary receives `{"file": "...", "project": "..."}` on stdin
+- Plugin response is parsed and merged into the traceability graph
+- Failed plugins produce a warning but do not abort the run
+
+[req,id=REQ-PLUGIN-002,version=1,priority=medium,aspice=SWE.1,
+ derives=REQ-PLUGIN-001,
+ status=approved,reviewed-by=paulefl,reviewed-date=2026-06-01]
+== System shall support enricher, validator, linker, reporter and notifier plugins
+
+[test-spec,id=TS-PLUGIN-002,req=REQ-PLUGIN-002,aspice=SWE.4-BP3]
+====
+Test: enricher patches applied to graph elements; validator issues returned; linker links merged; reporter files generated; notifier called with gaps payload
+====
+
+Extends REQ-PLUGIN-001 to cover post-parsing plugin types:
+
+- `enricher` — receives graph snapshot, returns `[]EnrichmentPatch` to annotate elements with external metadata
+- `validator` — receives graph snapshot, returns `[]ValidationIssue` with rule, severity, element_id, message
+- `linker` — receives graph snapshot, returns `[]TraceLink` to add custom trace connections
+- `reporter` — receives graph snapshot + output_dir, writes files and returns their paths
+- `notifier` — receives gaps/metrics payload as side-effect trigger (Slack, Teams, audit log)
+
+Acceptance Criteria:
+- Enricher patches applied to Requirements, ArchElements, TestSpecs
+- Validator issues collected and included in validation output
+- Linker links merged before BuildLinks() so they participate in traceability
+- Reporter files listed in command output
+- Notifier exit code != 0 produces warning only
+
+[req,id=REQ-PLUGIN-003,version=1,priority=low,aspice=SWE.1,
+ derives=REQ-PLUGIN-001,
+ status=approved,reviewed-by=paulefl,reviewed-date=2026-06-01]
+== System shall ship example plugins for common formats
+
+[test-spec,id=TS-PLUGIN-003,req=REQ-PLUGIN-003,aspice=SWE.4-BP3]
+====
+Test: example plugins in examples/plugins/ are present and follow the documented protocol
+====
+
+The system shall provide ready-to-use example plugin scripts:
+
+- `examples/plugins/markdown-req-parser.py` — parses `## REQ-*: Title` blocks from Markdown
+- `examples/plugins/custom-validator.sh` — enforces REQ-* naming convention
+- `examples/plugins/keyword-linker.py` — links test results to requirements by keyword match
+- `examples/plugins/slack-notifier.sh` — posts gap summary to Slack webhook
+
+Acceptance Criteria:
+- Each example follows stdin/stdout JSON protocol
+- Each example is executable and includes usage comment
+
 == Open Questions & Future Phases
 
 [NOTE]

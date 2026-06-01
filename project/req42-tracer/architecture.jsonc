@@ -135,6 +135,57 @@
               "description": "Loads JUnit XML and go-test JSON test results",
               "impl": "internal/testresult"
             },
+            "plugin": {
+              "kind": "component",
+              "title": "Plugin System",
+              "technology": "Go",
+              "description": "Executes external plugin binaries via stdin/stdout JSON protocol (30s timeout). Supports parser, enricher, validator, linker, reporter and notifier plugins.",
+              "impl": "internal/plugin",
+              "children": {
+                "runner": {
+                  "kind": "component",
+                  "title": "Plugin Runner",
+                  "technology": "Go",
+                  "description": "Core execution engine: starts subprocess via exec.CommandContext, writes JSON request to stdin, reads JSON response from stdout",
+                  "impl": "internal/plugin/plugin.go"
+                },
+                "parsers": {
+                  "kind": "component",
+                  "title": "Parser Runners",
+                  "technology": "Go",
+                  "description": "Typed runners: RunTestResultParser, RunRequirementParser, RunArchParser, RunTestSpecParser, RunDesignParser",
+                  "impl": "internal/plugin/plugin.go"
+                },
+                "enricher": {
+                  "kind": "component",
+                  "title": "Enricher Runner",
+                  "technology": "Go",
+                  "description": "Calls enricher plugin with graph snapshot, applies EnrichmentPatches to Requirements/ArchElements/TestSpecs",
+                  "impl": "internal/plugin/plugin.go"
+                },
+                "validator": {
+                  "kind": "component",
+                  "title": "Validator Runner",
+                  "technology": "Go",
+                  "description": "Calls validator plugin with graph snapshot, returns []ValidationIssue collected alongside built-in rules",
+                  "impl": "internal/plugin/plugin.go"
+                },
+                "linker": {
+                  "kind": "component",
+                  "title": "Linker Runner",
+                  "technology": "Go",
+                  "description": "Calls linker plugin with graph snapshot, merges returned []TraceLink before BuildLinks()",
+                  "impl": "internal/plugin/plugin.go"
+                },
+                "reporter": {
+                  "kind": "component",
+                  "title": "Reporter & Notifier Runner",
+                  "technology": "Go",
+                  "description": "RunReporter: generates output files; RunNotifier: side-effect trigger (Slack, Teams, audit log)",
+                  "impl": "internal/plugin/plugin.go"
+                }
+              }
+            },
             "lsp": {
               "kind": "component",
               "title": "LSP Server",
