@@ -4,27 +4,54 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/paulefl/req42-tracer/src/internal/model"
 )
 
-// writeMockPlugin writes an executable shell script that prints fixedOutput to stdout.
+// writeMockPlugin writes a cross-platform executable that prints fixedOutput to stdout.
+// On Windows: a .cmd file using `type`; on Unix: a shell script using `cat`.
 func writeMockPlugin(t *testing.T, fixedOutput string) string {
 	t.Helper()
 	dir := t.TempDir()
+
+	// Write output to a data file so we avoid quoting issues in wrapper scripts.
+	dataFile := filepath.Join(dir, "output.json")
+	if err := os.WriteFile(dataFile, []byte(fixedOutput), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	if runtime.GOOS == "windows" {
+		path := filepath.Join(dir, "mock-plugin.cmd")
+		script := "@echo off\ntype \"" + dataFile + "\"\n"
+		if err := os.WriteFile(path, []byte(script), 0644); err != nil {
+			t.Fatal(err)
+		}
+		return path
+	}
+
 	path := filepath.Join(dir, "mock-plugin")
-	script := "#!/bin/sh\ncat <<'EOF'\n" + fixedOutput + "\nEOF\n"
+	script := "#!/bin/sh\ncat \"" + dataFile + "\"\n"
 	if err := os.WriteFile(path, []byte(script), 0755); err != nil {
 		t.Fatal(err)
 	}
 	return path
 }
 
-// writeMockPluginFailing writes a plugin that exits with code 1.
+// writeMockPluginFailing writes a cross-platform plugin that exits with code 1.
 func writeMockPluginFailing(t *testing.T) string {
 	t.Helper()
 	dir := t.TempDir()
+
+	if runtime.GOOS == "windows" {
+		path := filepath.Join(dir, "fail-plugin.cmd")
+		if err := os.WriteFile(path, []byte("@echo off\necho error 1>&2\nexit /b 1\n"), 0644); err != nil {
+			t.Fatal(err)
+		}
+		return path
+	}
+
 	path := filepath.Join(dir, "fail-plugin")
 	if err := os.WriteFile(path, []byte("#!/bin/sh\necho 'error' >&2\nexit 1\n"), 0755); err != nil {
 		t.Fatal(err)
