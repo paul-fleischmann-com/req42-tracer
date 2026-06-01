@@ -21,3 +21,6 @@ link:block-attribute-reference.html[Block Attribute Reference]::
 
 link:workflow-guide.html[Workflow Guide]::
   ASPICE-compliant development workflow, CI/CD integration, and best practices.
+
+link:plugin-guide.html[Plugin Guide]::
+  Extend req42-tracer with external plugin binaries — custom parsers, validators, enrichers, reporters and notifiers via stdin/stdout JSON protocol.

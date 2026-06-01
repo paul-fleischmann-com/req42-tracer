@@ -301,6 +301,56 @@ Resolves `req=`, `arch=`, `test-spec=` value under cursor to a `Location`
 (file URI + 0-based line) using `FilePath`/`LineNumber` from the graph.
 Supports cross-file navigation to any parsed source file.
 
+=== 5.7 Level 2 — Plugin Subcomponents
+
+[arch,id=comp.plugin,aspice=SWE.2,impl=internal/plugin/plugin.go,req=REQ-PLUGIN-001,REQ-PLUGIN-002]
+==== Plugin System
+
+Provides stdin/stdout JSON protocol runner for external plugin binaries.
+Supports 6 plugin categories: parser, enricher, validator, linker, reporter, notifier.
+
+[arch,id=comp.plugin.runner,parent=comp.plugin,aspice=SWE.3,impl=internal/plugin/plugin.go,req=REQ-PLUGIN-001]
+==== Plugin Runner
+
+Core execution engine: starts subprocess via `exec.CommandContext`, writes JSON request
+to stdin, reads JSON response from stdout, applies 30s timeout. Returns typed result
+or error on non-zero exit code.
+
+[arch,id=comp.plugin.parsers,parent=comp.plugin,aspice=SWE.3,impl=internal/plugin/plugin.go,req=REQ-PLUGIN-001]
+==== Parser Runners
+
+Typed runners for each parser plugin type:
+
+- `RunTestResultParser` → `[]*model.TestResult`
+- `RunRequirementParser` → `[]*model.Requirement`
+- `RunArchParser` → `[]*model.ArchElement`
+- `RunTestSpecParser` → `[]*model.TestSpec`
+- `RunDesignParser` → `[]*model.DesignElement`
+
+[arch,id=comp.plugin.enricher,parent=comp.plugin,aspice=SWE.3,impl=internal/plugin/plugin.go,req=REQ-PLUGIN-002]
+==== Enricher Runner
+
+Calls enricher plugin with graph snapshot, receives `[]EnrichmentPatch`,
+applies patches to `Requirements`, `ArchElements`, `TestSpecs` via `ApplyEnrichments`.
+
+[arch,id=comp.plugin.validator,parent=comp.plugin,aspice=SWE.3,impl=internal/plugin/plugin.go,req=REQ-PLUGIN-002]
+==== Validator Runner
+
+Calls validator plugin with graph snapshot, returns `[]ValidationIssue`
+(rule, severity, element_id, message). Issues are collected alongside built-in validation results.
+
+[arch,id=comp.plugin.linker,parent=comp.plugin,aspice=SWE.3,impl=internal/plugin/plugin.go,req=REQ-PLUGIN-002]
+==== Linker Runner
+
+Calls linker plugin with graph snapshot, returns `[]*model.TraceLink`.
+Links are merged into the builder before `BuildLinks()` executes.
+
+[arch,id=comp.plugin.reporter,parent=comp.plugin,aspice=SWE.3,impl=internal/plugin/plugin.go,req=REQ-PLUGIN-002]
+==== Reporter & Notifier Runner
+
+- `RunReporter` — calls reporter plugin with graph + output_dir, returns generated file paths
+- `RunNotifier` — calls notifier plugin with gaps payload as side-effect trigger
+
 == 6. Runtime View
 
 Describes dynamic behavior during execution.
@@ -439,12 +489,13 @@ Central configuration via `.req42.yaml`:
 
 === 8.3 Extensibility
 
-[arch,id=concept.plugins,req=REQ-REPORT-001]
+[arch,id=concept.plugins,req=REQ-PLUGIN-001,REQ-PLUGIN-002]
 ==== Plugin Points
 
-- Custom report formatters
-- Test result parsers (extensible for new CI formats)
-- ASPICE rules customization
+External binaries communicate via stdin/stdout JSON (30s timeout, no CGo).
+Plugin categories: `parser` (5 types), `enricher`, `validator`, `linker`, `reporter`, `notifier`.
+Configuration: `.req42.yaml` → `plugins.*` or `test-results[format=plugin]`.
+See `examples/plugins/` for ready-to-use starter scripts.
 
 == 9. Architecture Decisions
 
