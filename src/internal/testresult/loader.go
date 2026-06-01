@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/paulefl/req42-tracer/src/internal/model"
+	"github.com/paulefl/req42-tracer/src/internal/plugin"
 )
 
 // Loader loads test results from various formats.
@@ -33,11 +34,30 @@ func (l *Loader) Load(filePath, format string) ([]*model.TestResult, error) {
 	}
 }
 
+// LoadPlugin loads test results via an external plugin binary.
+func (l *Loader) LoadPlugin(filePath, pluginPath string) ([]*model.TestResult, error) {
+	results, err := plugin.RunTestResultParser(pluginPath, filePath, l.project)
+	if err != nil {
+		return nil, err
+	}
+	for _, r := range results {
+		r.Project = l.project
+		r.Platform = l.platform
+	}
+	return results, nil
+}
+
 // LoadAll loads test results from multiple files based on configuration.
 func LoadAll(graph *model.TraceabilityGraph, config *model.Config) error {
 	for _, testSource := range config.TestResults {
 		loader := NewLoader("software", "linux") // Default to linux
-		results, err := loader.Load(testSource.Path, testSource.Format)
+		var results []*model.TestResult
+		var err error
+		if strings.ToLower(testSource.Format) == "plugin" {
+			results, err = loader.LoadPlugin(testSource.Path, testSource.PluginPath)
+		} else {
+			results, err = loader.Load(testSource.Path, testSource.Format)
+		}
 		if err != nil {
 			// Log warning but continue
 			continue
