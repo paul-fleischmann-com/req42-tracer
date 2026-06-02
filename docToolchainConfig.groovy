@@ -12,4 +12,4 @@ inputFiles = [
     [file: 'arc42/arc42.adoc',                        formats: ['html', 'pdf']],
 ]
 
-imageDirs = ["${inputPath}/images"]
+imageDirs = ["${inputPath}/arc42/images"]

@@ -41,6 +41,11 @@ jobs:
           output-path: build/docs
           fail-on-warning: 'true'
 
+      - name: Copy SVG images into HTML output
+        run: |
+          mkdir -p build/docs/html5/arc42/images
+          cp project/req42-tracer/docs/arc42/images/*.svg build/docs/html5/arc42/images/ 2>/dev/null || true
+
       - name: Upload PDF artifact
         if: always()
         uses: actions/upload-artifact@v4
