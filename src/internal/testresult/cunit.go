@@ -39,7 +39,7 @@ type cunitFailure struct {
 
 // ParseCUnit parses a CUnit Automated XML test result file.
 func ParseCUnit(filePath, project, platform string) ([]*model.TestResult, error) {
-	data, err := os.ReadFile(filePath)
+	data, err := os.ReadFile(filePath) // #nosec G304 -- path comes from user config
 	if err != nil {
 		return nil, fmt.Errorf("failed to read CUnit file %s: %w", filePath, err)
 	}

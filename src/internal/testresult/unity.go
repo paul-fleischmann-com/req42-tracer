@@ -32,7 +32,7 @@ type unitySummary struct {
 
 // ParseUnity parses a Unity XML test result file.
 func ParseUnity(filePath, project, platform string) ([]*model.TestResult, error) {
-	data, err := os.ReadFile(filePath)
+	data, err := os.ReadFile(filePath) // #nosec G304 -- path comes from user config
 	if err != nil {
 		return nil, fmt.Errorf("failed to read Unity file %s: %w", filePath, err)
 	}

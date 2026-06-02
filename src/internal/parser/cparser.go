@@ -91,7 +91,7 @@ func walkCDir(dir string) ([]cAnnotation, error) {
 // A pending annotation is committed when a function declaration is found on the
 // next non-blank, non-comment line.
 func parseCFile(filePath string) ([]cAnnotation, error) {
-	f, err := os.Open(filePath)
+	f, err := os.Open(filePath) // #nosec G304 -- path comes from user config
 	if err != nil {
 		return nil, err
 	}
