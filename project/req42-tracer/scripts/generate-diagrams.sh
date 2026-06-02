@@ -103,23 +103,17 @@ import os, sys, re
 out_dir        = sys.argv[1]
 include_format = sys.argv[2]
 
-bausteinsicht_views = {
-    os.path.splitext(f)[0]
-    for f in os.listdir(out_dir)
-    if f.endswith(".mmd")
-}
-
 # Titles for static diagrams (filename → human title)
 STATIC_TITLES = {
     "runtime_trace":       "Trace Command Sequence",
     "runtime_analyzegaps": "AnalyzeGaps() Algorithm",
 }
 
-for view in sorted(bausteinsicht_views):
+for view in sorted(STATIC_TITLES):
     adoc_path = os.path.join(out_dir, f"{view}.adoc")
     mmd_path  = os.path.join(out_dir, f"{view}.mmd")
-    if os.path.exists(adoc_path):
-        continue  # already written by bausteinsicht loop above
+    if not os.path.exists(mmd_path):
+        continue
     with open(mmd_path) as f:
         source = f.read().rstrip("\n")
     title = STATIC_TITLES.get(view, view)
