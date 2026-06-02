@@ -73,8 +73,8 @@ const HTMLTemplate = `<!DOCTYPE html>
         .legend-dot.requirement { background: #4a90e2; }
         .legend-dot.arch { background: #7ed321; }
         .legend-dot.dsn { background: #9b59b6; }
-        .legend-dot.test-spec { background: #f5a623; }
-        .legend-dot.test-code { background: #f5a623; opacity: 0.7; }
+        .legend-dot.test-spec { background: #e74c3c; }
+        .legend-dot.test-code { background: #e67e22; }
         .legend-dot.test-result { background: #999; }
 
         .stats {
@@ -336,9 +336,9 @@ const HTMLTemplate = `<!DOCTYPE html>
         }
 
         .node.selected {
-            stroke: #f5a623;
+            stroke: #e74c3c;
             stroke-width: 3px;
-            filter: drop-shadow(0 0 6px rgba(245, 166, 35, 0.8));
+            filter: drop-shadow(0 0 6px rgba(231, 76, 60, 0.8));
         }
 
         .node-label {
@@ -1139,7 +1139,7 @@ const HTMLTemplate = `<!DOCTYPE html>
         function renderSidebarSelector(data) {
             const colorMap = {
                 'requirement': '#4a90e2', 'arch': '#7ed321', 'dsn': '#9b59b6',
-                'test-spec': '#f5a623', 'test-code': '#e67e22', 'test-result': '#999'
+                'test-spec': '#e74c3c', 'test-code': '#e67e22', 'test-result': '#999'
             };
             const list = document.getElementById('selector-list');
             if (!list || !data || !data.nodes) return;
@@ -1212,8 +1212,8 @@ const HTMLTemplate = `<!DOCTYPE html>
                 'requirement': '#4a90e2',
                 'arch': '#7ed321',
                 'dsn': '#9b59b6',
-                'test-spec': '#f5a623',
-                'test-code': '#f5a623',
+                'test-spec': '#e74c3c',
+                'test-code': '#e67e22',
                 'test-result': '#999'
             };
 
@@ -1652,7 +1652,7 @@ const HTMLTemplate = `<!DOCTYPE html>
         function renderElements() {
             const typeFilter = document.getElementById('el-filter-type').value;
             const search = (document.getElementById('el-search').value || '').toLowerCase();
-            const typeColor = { req: '#4a90e2', arch: '#7ed321', dsn: '#9b59b6', 'test-spec': '#f5a623', 'test-result': '#999' };
+            const typeColor = { req: '#4a90e2', arch: '#7ed321', dsn: '#9b59b6', 'test-spec': '#e74c3c', 'test-result': '#999' };
 
             let items = (elementsData.items || []).filter(it => {
                 if (typeFilter && it.type !== typeFilter) return false;
@@ -1881,7 +1881,7 @@ const HTMLTemplate = `<!DOCTYPE html>
             html += '<th title="Implementation package (impl= attribute)">Impl</th>';
             html += '<th title="Overall coverage: Arch + TestSpec + TestResult">Coverage</th>';
             matrixData.columns.forEach(col => {
-                const typeColor = col.Type === 'arch' ? '#7ed321' : (col.Type === 'dsn' ? '#9b59b6' : '#f5a623');
+                const typeColor = col.Type === 'arch' ? '#7ed321' : (col.Type === 'dsn' ? '#9b59b6' : (col.Type === 'test-code' ? '#e67e22' : '#e74c3c'));
                 html += '<th style="cursor:pointer;border-top:3px solid ' + typeColor + '" title="[' + escHtml(col.Type) + '] ' + escHtml(col.Title) + '" onclick="sortMatrix(\'' + escHtml(col.ID) + '\')">' + escHtml(col.ID) + sortArrow(col.ID) + '</th>';
             });
             html += '</tr></thead><tbody>';
