@@ -8,6 +8,8 @@ on:
     branches: [master]
     paths:
       - 'project/req42-tracer/docs/**'
+      - 'project/req42-tracer/architecture.jsonc'
+      - 'project/req42-tracer/scripts/generate-diagrams.sh'
       - 'docToolchainConfig.groovy'
       - 'dtcw'
       - '.github/workflows/docs.yml'
@@ -26,6 +28,12 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install Mermaid CLI and render diagrams as SVG
+        run: |
+          npm install -g @mermaid-js/mermaid-cli
+          cd project/req42-tracer
+          ./scripts/generate-diagrams.sh --include svg
 
       - name: Build docs (docToolchain via Docker)
         uses: paul-fleischmann-com/doctoolchain-action@a6c2403e4f622ef87518eadebb66a05e51eaec50  # v1
