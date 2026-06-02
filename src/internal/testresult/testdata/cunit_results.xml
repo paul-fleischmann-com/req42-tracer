@@ -1,0 +1,16 @@
+<CUNIT_TEST_RUN_REPORT>
+  <CUNIT_RESULT_LISTING>
+    <CUNIT_RUN_SUITE>
+      <SUITE_NAME>GPIO Tests</SUITE_NAME>
+      <CUNIT_RUN_TEST_SUCCESS>
+        <TEST_NAME>test_gpio_init</TEST_NAME>
+      </CUNIT_RUN_TEST_SUCCESS>
+      <CUNIT_RUN_TEST_FAILURE>
+        <TEST_NAME>test_gpio_read</TEST_NAME>
+        <CONDITION>CU_ASSERT(gpio_read(0) == 1)</CONDITION>
+        <FILE>test/test_gpio.c</FILE>
+        <LINE>63</LINE>
+      </CUNIT_RUN_TEST_FAILURE>
+    </CUNIT_RUN_SUITE>
+  </CUNIT_RESULT_LISTING>
+</CUNIT_TEST_RUN_REPORT>

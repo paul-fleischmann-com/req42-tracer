@@ -2,6 +2,7 @@ package validation
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/paulefl/req42-tracer/src/internal/graph"
@@ -49,6 +50,7 @@ func (e *RuleEngine) Run() []*RuleResult {
 		"missing-review":              e.ruleMissingReview,
 		"missing-test-spec":           e.ruleMissingTestSpec,
 		"missing-impl":                e.ruleMissingImpl,
+		"impl-file-not-found":         e.ruleImplFileNotFound,
 		"orphan-architecture":         e.ruleOrphanArchitecture,
 		"orphan-tests":                e.ruleOrphanTests,
 		"stale-traces":                e.ruleStaleTraces,
@@ -298,6 +300,38 @@ func (e *RuleEngine) ruleMaxOrphanPercentage(sev Severity) *RuleResult {
 				orphanPct, threshold, len(gaps.OrphanRequirements), len(g.Requirements),
 			),
 		})
+	}
+	return result
+}
+
+// ruleImplFileNotFound flags arch/design elements whose impl= value references a file that does not exist on disk.
+// Only file-based impl refs are checked (those containing a '.' in the file name component).
+// Pure Go package paths (no extension) are skipped.
+func (e *RuleEngine) ruleImplFileNotFound(sev Severity) *RuleResult {
+	g := e.analyzer.GetGraph()
+	result := &RuleResult{RuleID: "impl-file-not-found", Severity: sev}
+	check := func(implVal, id, filePath string, line int) {
+		if implVal == "" {
+			return
+		}
+		ref := model.ParseImplRef(implVal)
+		if !ref.IsFile {
+			return
+		}
+		if _, err := os.Stat(ref.FilePath); os.IsNotExist(err) {
+			result.Violations = append(result.Violations, Violation{
+				Rule:     "impl-file-not-found",
+				Severity: sev,
+				Message:  fmt.Sprintf("%s: impl= references non-existent file %q", id, ref.FilePath),
+				Location: fmt.Sprintf("%s:%d", filePath, line),
+			})
+		}
+	}
+	for _, arch := range g.ArchElements {
+		check(arch.Impl, arch.ID, arch.FilePath, arch.LineNumber)
+	}
+	for _, dsn := range g.DesignElements {
+		check(dsn.Impl, dsn.ID, dsn.FilePath, dsn.LineNumber)
 	}
 	return result
 }

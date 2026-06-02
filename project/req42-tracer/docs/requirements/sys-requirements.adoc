@@ -1,7 +1,7 @@
 = req42-tracer — System Requirements (SYS)
 
 :description: System-level requirements for req42-tracer (ASPICE SWE.1 BP1 — upstream of SW requirements)
-:module: github.com/paulefl/req42-tracer
+:module: github.com/paul-fleischmann-com/req42-tracer
 
 == Overview
 

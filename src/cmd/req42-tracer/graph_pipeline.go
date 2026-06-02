@@ -45,6 +45,18 @@ func buildGraph(config *model.Config, reqDir, arcDir, project string, verbose bo
 		loadBausteinsicht(builder, bPath, project, verbose)
 	}
 
+	// C source parsing: apply @arch → impl= patches onto arch elements.
+	if len(config.CSources) > 0 {
+		if implRefs, err := parser.ParseCSourceDirs(config.CSources, project); err == nil {
+			builder.ApplyImplRefs(implRefs)
+			if verbose {
+				fmt.Fprintf(os.Stderr, "Applied %d C impl refs from c-sources\n", len(implRefs))
+			}
+		} else if verbose {
+			fmt.Fprintf(os.Stderr, "Warning: C source parsing: %v\n", err)
+		}
+	}
+
 	// Parse Go test files for [test-spec] annotations → explicit TestCode entries
 	if goSrc := config.GoSrcDir; goSrc != "" {
 		if goGraph, err := parser.ParseGoTestFiles(goSrc, project); err == nil {

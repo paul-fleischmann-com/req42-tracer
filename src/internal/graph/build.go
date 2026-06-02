@@ -284,6 +284,19 @@ func (b *Builder) DeriveASPICELevels() {
 	}
 }
 
+// ApplyImplRefs sets the Impl field on existing arch elements from a map of
+// archID → implRef without creating new elements or triggering duplicate errors.
+// Only updates elements whose Impl is currently empty (adoc-declared impl wins).
+func (b *Builder) ApplyImplRefs(refs map[string]string) {
+	for archID, implRef := range refs {
+		if arch, exists := b.graph.ArchElements[archID]; exists {
+			if arch.Impl == "" {
+				arch.Impl = implRef
+			}
+		}
+	}
+}
+
 // GetGraph returns the built traceability graph.
 func (b *Builder) GetGraph() *model.TraceabilityGraph {
 	return b.graph

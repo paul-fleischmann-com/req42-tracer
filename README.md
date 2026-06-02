@@ -63,17 +63,51 @@ req42-tracer enforces the full ASPICE SWE.1–SWE.6 traceability chain. Each blo
                 [test-spec/SWE.5] ◀──arch=──────────┘
 ```
 
+### Vollständige ASPICE-Traceability-Kette (C-Projekt-Beispiel)
+
+```asciidoc
+[req,id=SWR-GPIO-001,aspice=SWE.1]
+== System shall initialize GPIO hardware
+The HAL shall configure pin direction and pull resistors.
+
+[arch,id=comp.hal.gpio,req=SWR-GPIO-001,aspice=SWE.2,
+ impl=src/hal/gpio.c:gpio_init:23]
+== GPIO Hardware Abstraction Layer
+
+[test-spec,id=TS-GPIO-001,req=SWR-GPIO-001,aspice=SWE.4-BP4]
+== Test: gpio_init configures pin direction correctly
+```
+
+Im C-Quellcode (`src/hal/gpio.c`):
+```c
+/**
+ * @req SWR-GPIO-001
+ * @arch comp.hal.gpio
+ * @aspice SWE.3
+ */
+void gpio_init(uint8_t pin, gpio_direction_t dir) { ... }
+```
+
 ### Coverage rules
 
-| Link | Attribute | ASPICE | Required |
+| Was | Wo | ASPICE | Pflicht |
 |---|---|---|---|
-| `[req]` → `[arch]` | `req=` on `[arch]` | SWE.2 BP4 | ✅ |
-| `[arch]` → `[dsn]` | `arch=` on `[dsn]` | SWE.3 BP4 | optional |
-| `[arch]` / `[dsn]` → implementation | `impl=` | SWE.2/SWE.3 BP5 | ✅ |
-| `[dsn]` → Unit Test | `dsn=` on `[test-spec]` + `aspice=SWE.4` | SWE.4 BP4 | ✅ |
-| `[arch]` → Integration Test | `arch=` on `[test-spec]` + `aspice=SWE.5` | SWE.5 BP4 | ✅ |
-| `[req]` → SW Qualification Test | `req=` on `[test-spec]` + `aspice=SWE.6` | SWE.6 BP4 | ✅ |
-| `[test-spec]` → TestResult | JUnit/go-test XML | SWE.4/5/6 BP5 | ✅ |
+| `req=SWR-001` | `[arch]`-Block | SWE.2 BP4 | ✅ |
+| `impl=file.c:func:line` | `[arch]`-Block | SWE.3 BP5 | ✅ |
+| `req=SWR-001` | `[test-spec]`-Block | SWE.4 BP4 | ✅ |
+| TestResult PASS | JUnit/Unity/CUnit XML | SWE.4 BP5 | ✅ |
+| `derives=SYS-001` | `[req]`-Block | SWE.1 BP5 | optional |
+
+> **Wichtig:** `impl=` gehört zum **`[arch]`-Block**, nicht zum `[req]`-Block.
+
+#### impl= Formate
+
+| Format | Beispiel | Bedeutung |
+|---|---|---|
+| Go-Package | `src/internal/parser` | Go-Paketpfad |
+| Datei | `src/hal/gpio.c` | Quelldatei |
+| Datei:Funktion | `src/hal/gpio.c:gpio_init` | Funktion in Datei |
+| Datei:Funktion:Zeile | `src/hal/gpio.c:gpio_init:23` | Exakte Zeile (klickbar im HTML-Report) |
 
 ### Gap messages
 
