@@ -13,6 +13,7 @@ C4Component
         Component(system_backend_lsp, "LSP Server", "Go", "JSON-RPC 2.0 over stdio; initialize/completion/diagnostics")
         Component(system_backend_model, "Domain Model", "Go", "Shared data types (Requirement, ArchElement, TraceLink, Graph) and configuration loading")
         Component(system_backend_parser, "Document Parser", "Go", "Parses AsciiDoc files and Bausteinsicht JSONC models")
+        Component(system_backend_plugin, "Plugin System", "Go", "Executes external plugin binaries via stdin/stdout JSON protocol (30s timeout). Supports parser, enricher, validator, linker, reporter and notifier plugins.")
         Component(system_backend_report, "Report Generator", "Go", "Produces CLI and HTML reports")
         Component(system_backend_templates, "Project Templates", "Go", "Embedded default templates used by the init command")
         Component(system_backend_testresult, "Test Result Loader", "Go", "Loads JUnit XML and go-test JSON test results")

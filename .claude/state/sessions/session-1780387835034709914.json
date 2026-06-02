@@ -1,0 +1,44 @@
+{
+  "changes_this_session": [],
+  "cwd": "/workspace/req42-tracer",
+  "duration_minutes": 0,
+  "ended_at": "2026-06-02T08:10:44Z",
+  "event_seq": 1,
+  "fork_count": 0,
+  "git": {
+    "branch": "master",
+    "last_commit": "f1e9435",
+    "uncommitted_changes": 0
+  },
+  "harness_mem": {
+    "healthy": true,
+    "last_checked": "2026-06-02T08:10:35Z",
+    "last_error": ""
+  },
+  "intent": "literal",
+  "last_event_id": "event-000001",
+  "last_message_hash": "e99d9ffcd77660c1",
+  "last_message_length": 302,
+  "memory_logged": true,
+  "orchestration": {
+    "max_state_retries": 3,
+    "retry_backoff_seconds": 10
+  },
+  "parent_session_id": null,
+  "plans": {
+    "completed_tasks": 0,
+    "exists": false,
+    "last_modified": 0,
+    "pending_tasks": 0,
+    "todo_tasks": 0,
+    "wip_tasks": 0
+  },
+  "project_name": "req42-tracer",
+  "prompt_seq": 1,
+  "resume_token": "resume-1780387835034714891",
+  "session_id": "session-1780387835034709914",
+  "started_at": "2026-06-02T08:10:35Z",
+  "state": "stopped",
+  "state_version": 1,
+  "updated_at": "2026-06-02T08:10:40Z"
+}

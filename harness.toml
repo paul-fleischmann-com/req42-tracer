@@ -1,0 +1,43 @@
+[project]
+name = "req42-tracer"
+version = "0.1.0"
+description = "Requirements Tracing Tool für ASPICE PAM 4.0 (Go CLI)"
+homepage = "https://github.com/paul-fleischmann-com/req42-tracer"
+repository = "https://github.com/paul-fleischmann-com/req42-tracer"
+license = "MIT"
+keywords = ["aspice", "requirements", "traceability", "go", "cli"]
+
+[project.author]
+name = "paul-fleischmann-com"
+url = "https://github.com/paul-fleischmann-com"
+
+[env]
+CLAUDE_CODE_SUBPROCESS_ENV_SCRUB = "1"
+
+[safety.permissions]
+protectedBranchPush = "ask"
+allow = [
+  "Bash(git status:*)",
+  "Bash(git diff:*)",
+  "Bash(git log:*)",
+  "Bash(git branch:*)",
+  "Bash(git show:*)",
+  "Bash(go test:*)",
+  "Bash(go build:*)",
+  "Bash(go vet:*)",
+  "Bash(go run:*)",
+  "Bash(go tool:*)",
+  "Bash(gh issue:*)",
+  "Bash(gh pr:*)",
+  "Bash(gh run:*)",
+  "Bash(gh api:*)",
+  "Bash(gh auth:*)",
+]
+deny = [
+  "Bash(sudo:*)",
+  "Bash(rm -rf:*)",
+  "Read(./.env)",
+  "Read(./.env.*)",
+  "Read(**/*.pem)",
+  "Read(**/*.key)",
+]

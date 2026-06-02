@@ -1,0 +1,7 @@
+{
+  "timestamp": "2026-06-02T15:37:21Z",
+  "changed_file": "src/internal/parser/gocode.go",
+  "test_command": "go test ./...",
+  "related_test": "/workspace/req42-tracer/src/internal/parser/gocode_test.go",
+  "recommendation": "テストの実行を推奨します"
+}

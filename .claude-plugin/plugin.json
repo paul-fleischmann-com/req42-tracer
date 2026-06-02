@@ -1,0 +1,22 @@
+{
+  "name": "req42-tracer",
+  "version": "0.1.0",
+  "description": "Requirements Tracing Tool für ASPICE PAM 4.0 (Go CLI)",
+  "author": {
+    "name": "paul-fleischmann-com",
+    "url": "https://github.com/paul-fleischmann-com"
+  },
+  "homepage": "https://github.com/paul-fleischmann-com/req42-tracer",
+  "repository": "https://github.com/paul-fleischmann-com/req42-tracer",
+  "license": "MIT",
+  "keywords": [
+    "aspice",
+    "requirements",
+    "traceability",
+    "go",
+    "cli"
+  ],
+  "skills": [
+    "./skills/"
+  ]
+}
