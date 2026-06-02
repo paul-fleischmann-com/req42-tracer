@@ -97,10 +97,17 @@ PYEOF
 if [[ "$INCLUDE_FORMAT" == "svg" ]]; then
   echo ""
   echo "Rendering SVGs with mmdc ..."
+
+  # Puppeteer needs --no-sandbox on GitHub Actions (Ubuntu AppArmor restrictions)
+  PUPPETEER_CFG="$(mktemp --suffix=.json)"
+  echo '{"args":["--no-sandbox","--disable-setuid-sandbox"]}' > "$PUPPETEER_CFG"
+  trap 'rm -f "$TMPJSON" "$PUPPETEER_CFG"' EXIT
+
   for mmd in "$OUT"/*.mmd; do
     view="$(basename "$mmd" .mmd)"
     svg="$OUT/${view}.svg"
-    mmdc -i "$mmd" -o "$svg" --backgroundColor transparent --quiet
+    mmdc -i "$mmd" -o "$svg" --backgroundColor transparent \
+         --puppeteerConfig "$PUPPETEER_CFG" --quiet
     echo "  ✓ ${view}.svg"
   done
   echo ""
