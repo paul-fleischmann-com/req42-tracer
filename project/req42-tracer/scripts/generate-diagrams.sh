@@ -21,6 +21,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 BAUSTEINSICHT="$REPO_ROOT/tools/bausteinsicht/bausteinsicht"
 MODEL="$REPO_ROOT/architecture.jsonc"
 OUT="$REPO_ROOT/docs/arc42/diagrams"
+IMG="$REPO_ROOT/docs/arc42/images"
 INCLUDE_FORMAT="adoc"
 
 while [[ $# -gt 0 ]]; do
@@ -33,6 +34,8 @@ done
 if [[ "$INCLUDE_FORMAT" != "adoc" && "$INCLUDE_FORMAT" != "svg" && "$INCLUDE_FORMAT" != "md" ]]; then
   echo "Error: --include must be 'adoc', 'svg', or 'md'" >&2; exit 1
 fi
+
+mkdir -p "$IMG"
 
 if [[ "$INCLUDE_FORMAT" == "svg" ]] && ! command -v mmdc &>/dev/null; then
   echo "Error: --include svg requires mmdc (npm install -g @mermaid-js/mermaid-cli)" >&2
@@ -77,9 +80,9 @@ for item in data:
         f.write(source + "\n")
 
     if include_format == "svg":
-        # Reference pre-rendered SVG — no mmdc needed at asciidoctor render time
+        # Reference pre-rendered SVG from images/ dir (asciidoctor-pdf default imagesdir)
         with open(adoc_path, "w") as f:
-            f.write(f".{title}\nimage::{view}.svg[{title},opts=inline]\n")
+            f.write(f".{title}\nimage::{view}.svg[{title}]\n")
     else:
         with open(adoc_path, "w") as f:
             f.write(f".{title}\n[mermaid]\n....\n{source}\n....\n")
@@ -105,10 +108,10 @@ if [[ "$INCLUDE_FORMAT" == "svg" ]]; then
 
   for mmd in "$OUT"/*.mmd; do
     view="$(basename "$mmd" .mmd)"
-    svg="$OUT/${view}.svg"
+    svg="$IMG/${view}.svg"
     mmdc -i "$mmd" -o "$svg" --backgroundColor transparent \
          -p "$PUPPETEER_CFG" --quiet
-    echo "  ✓ ${view}.svg"
+    echo "  ✓ ${view}.svg → images/"
   done
   echo ""
   echo "SVG rendering complete."
