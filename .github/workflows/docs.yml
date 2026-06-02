@@ -39,6 +39,15 @@ jobs:
         uses: paul-fleischmann-com/doctoolchain-action@a6c2403e4f622ef87518eadebb66a05e51eaec50  # v1
         with:
           output-path: build/docs
+          fail-on-warning: 'true'
+
+      - name: Upload PDF artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: arc42-pdf
+          path: build/docs/pdf/
+          if-no-files-found: warn
 
       - name: Add root index.html redirect
         run: |

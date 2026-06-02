@@ -139,10 +139,52 @@ if [[ "$INCLUDE_FORMAT" == "svg" ]]; then
   for mmd in "$OUT"/*.mmd; do
     view="$(basename "$mmd" .mmd)"
     svg="$IMG/${view}.svg"
-    mmdc -i "$mmd" -o "$svg" --backgroundColor transparent \
+    mmdc -i "$mmd" -o "$svg" --backgroundColor white \
          -p "$PUPPETEER_CFG" --quiet
     echo "  ✓ ${view}.svg → images/"
   done
+
+  # asciidoctor-pdf (Prawn) requires explicit width/height attributes on <rect>
+  # elements; mermaid SVGs often use CSS style properties instead.
+  echo ""
+  echo "Post-processing SVGs for asciidoctor-pdf compatibility ..."
+  python3 - "$IMG" << 'SVGEOF'
+import os, re, sys
+
+img_dir = sys.argv[1]
+
+def style_val(style, prop):
+    m = re.search(rf'(?:^|;)\s*{prop}\s*:\s*([^;]+)', style)
+    return m.group(1).strip().rstrip('px') if m else None
+
+for fname in os.listdir(img_dir):
+    if not fname.endswith('.svg'):
+        continue
+    path = os.path.join(img_dir, fname)
+    with open(path) as f:
+        content = f.read()
+
+    def fix_rect(m):
+        tag = m.group(0)
+        if 'width=' in tag and 'height=' in tag:
+            return tag
+        style_m = re.search(r'style="([^"]*)"', tag)
+        style = style_m.group(1) if style_m else ''
+        w = style_val(style, 'width')
+        h = style_val(style, 'height')
+        if w and 'width=' not in tag:
+            tag = tag.rstrip('>').rstrip('/') + f' width="{w}">'
+        if h and 'height=' not in tag:
+            tag = tag.rstrip('>').rstrip('/') + f' height="{h}">'
+        return tag
+
+    fixed = re.sub(r'<rect\b[^>]*/?>',  fix_rect, content)
+    if fixed != content:
+        with open(path, 'w') as f:
+            f.write(fixed)
+        print(f"  ✓ {fname}  (rect attributes fixed)")
+SVGEOF
+
   echo ""
   echo "SVG rendering complete."
 fi
