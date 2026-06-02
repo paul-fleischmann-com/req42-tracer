@@ -5,9 +5,14 @@
 # bausteinsicht tool — no hardcoded lists needed.
 #
 # Usage:
-#   ./scripts/generate-diagrams.sh                   # .mmd + .adoc + .md
-#   ./scripts/generate-diagrams.sh --include adoc    # (default) AsciiDoc target
+#   ./scripts/generate-diagrams.sh                   # .mmd + .adoc (mermaid block) + .md
+#   ./scripts/generate-diagrams.sh --include adoc    # (default) AsciiDoc with inline [mermaid] block
+#   ./scripts/generate-diagrams.sh --include svg     # AsciiDoc with image::view.svg[] (requires mmdc)
 #   ./scripts/generate-diagrams.sh --include md      # Markdown target
+#
+# The --include svg mode additionally runs mmdc to render SVG files and writes
+# adoc includes that reference the SVG images. Use this in CI before a
+# docToolchain build to avoid needing mmdc inside the Docker container.
 
 set -euo pipefail
 
@@ -25,8 +30,13 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ "$INCLUDE_FORMAT" != "adoc" && "$INCLUDE_FORMAT" != "md" ]]; then
-  echo "Error: --include must be 'adoc' or 'md'" >&2; exit 1
+if [[ "$INCLUDE_FORMAT" != "adoc" && "$INCLUDE_FORMAT" != "svg" && "$INCLUDE_FORMAT" != "md" ]]; then
+  echo "Error: --include must be 'adoc', 'svg', or 'md'" >&2; exit 1
+fi
+
+if [[ "$INCLUDE_FORMAT" == "svg" ]] && ! command -v mmdc &>/dev/null; then
+  echo "Error: --include svg requires mmdc (npm install -g @mermaid-js/mermaid-cli)" >&2
+  exit 1
 fi
 
 mkdir -p "$OUT"
@@ -35,18 +45,18 @@ echo "Reading views from architecture.jsonc ..."
 echo "Include format: $INCLUDE_FORMAT"
 echo ""
 
-# Export all views as JSON, save to temp file, then process with python3.
 TMPJSON=$(mktemp)
 trap 'rm -f "$TMPJSON"' EXIT
 
 "$BAUSTEINSICHT" --format json --model "$MODEL" \
   export-diagram --diagram-format mermaid > "$TMPJSON"
 
-python3 - "$OUT" "$TMPJSON" << 'PYEOF'
+python3 - "$OUT" "$TMPJSON" "$INCLUDE_FORMAT" << 'PYEOF'
 import json, sys, os, re
 
-out_dir  = sys.argv[1]
-json_path = sys.argv[2]
+out_dir        = sys.argv[1]
+json_path      = sys.argv[2]
+include_format = sys.argv[3]
 
 with open(json_path) as f:
     data = json.load(f)
@@ -56,7 +66,6 @@ for item in data:
     view   = item["view"]
     source = item["source"].rstrip("\n")
 
-    # Extract title from mermaid line "    title <TITLE>"
     title_match = re.search(r'^\s+title\s+(.+)$', source, re.MULTILINE)
     title = title_match.group(1).strip() if title_match else view
 
@@ -67,8 +76,13 @@ for item in data:
     with open(mmd_path, "w") as f:
         f.write(source + "\n")
 
-    with open(adoc_path, "w") as f:
-        f.write(f".{title}\n[mermaid]\n....\n{source}\n....\n")
+    if include_format == "svg":
+        # Reference pre-rendered SVG — no mmdc needed at asciidoctor render time
+        with open(adoc_path, "w") as f:
+            f.write(f".{title}\nimage::{view}.svg[{title},opts=inline]\n")
+    else:
+        with open(adoc_path, "w") as f:
+            f.write(f".{title}\n[mermaid]\n....\n{source}\n....\n")
 
     with open(md_path, "w") as f:
         f.write(f"### {title}\n\n```mermaid\n{source}\n```\n")
@@ -76,5 +90,19 @@ for item in data:
     print(f"  ✓ {view}  ({title})")
     count += 1
 
-print(f"\nDone — {count} views × 3 formats = {count * 3} files")
+print(f"\nDone — {count} views written ({include_format} format)")
 PYEOF
+
+# Render SVGs when --include svg is requested
+if [[ "$INCLUDE_FORMAT" == "svg" ]]; then
+  echo ""
+  echo "Rendering SVGs with mmdc ..."
+  for mmd in "$OUT"/*.mmd; do
+    view="$(basename "$mmd" .mmd)"
+    svg="$OUT/${view}.svg"
+    mmdc -i "$mmd" -o "$svg" --backgroundColor transparent --quiet
+    echo "  ✓ ${view}.svg"
+  done
+  echo ""
+  echo "SVG rendering complete."
+fi
