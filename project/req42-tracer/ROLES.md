@@ -6,22 +6,25 @@ Dieses Dokument definiert die Rollen und Verantwortlichkeiten im req42-tracer Pr
 
 ### Developer — `dev-paul-fleischmann`
 
-**Verantwortung:** Implementierung
+**Verantwortung:** Git-Identität für Commits
 
 - Feature-Branches erstellen und implementieren
-- Commits auf Feature-Branches pushen
-- Pull Requests öffnen
-- Code Review Findings fixen und committen
+- Commits signieren (`git config user.name "dev-paul-fleischmann"`)
 - Tests schreiben (gemäß [`TESTS.md`](TESTS.md))
 - CI-Fehler beheben
 
+> **Hinweis:** `dev-paul-fleischmann` wird ausschließlich als Git-Identität verwendet.
+> Alle `gh` CLI Aufrufe (PRs öffnen, Issues erstellen, API-Calls) laufen über **`paulefl`**,
+> da `dev-paul-fleischmann` ein sehr niedriges API-Rate-Limit hat (60 req/h).
+
 **Branch-Konvention:**
-```
-git checkout -b <issue-#>-kurzer-name
-# Commits als dev-paul-fleischmann
+```bash
+git checkout -b feat/<issue-#>-kurzer-name
+git config user.name "dev-paul-fleischmann"
+git config user.email "dev@paul-fleischmann.com"
 ```
 
-**PR erstellen:**
+**PR erstellen (als paulefl):**
 ```bash
 gh pr create --assignee dev-paul-fleischmann --reviewer paulefl
 ```
@@ -30,12 +33,12 @@ gh pr create --assignee dev-paul-fleischmann --reviewer paulefl
 
 ### Reviewer — `paulefl`
 
-**Verantwortung:** Code- und Security-Review, Merge-Entscheidung
+**Verantwortung:** Alle `gh` CLI Operationen, Code-Review, Merge
 
+- Einziger Account für `gh` CLI Aufrufe (Issues, PRs, API, Milestones)
 - Pull Requests reviewen (Code Review + Security Review gemäß [`REVIEW.md`](REVIEW.md))
 - Review-Findings als Inline-Kommentare im PR dokumentieren
-- PRs approven oder Änderungen anfordern
-- Feature-Branches in `master` mergen
+- PRs approven und in `master` mergen
 - Releases taggen
 
 ---
@@ -43,42 +46,39 @@ gh pr create --assignee dev-paul-fleischmann --reviewer paulefl
 ## Workflow
 
 ```
-dev-paul-fleischmann          paulefl
-        │                        │
-        │  feature branch        │
-        ├──────────────────>     │
-        │  implement + test      │
-        │  /code-review          │
-        │  /security-review      │
-        │                        │
-        │  open PR               │
-        ├──────────────────────> │
-        │                        │  review
-        │                        │  inline comments
-        │  fix findings  <───────┤
-        ├──────────────────────> │
-        │                        │  approve + merge
-        │  <─────────────────────┤
+git identity:                    gh CLI:
+dev-paul-fleischmann             paulefl
+        │                           │
+        │  feature branch            │
+        ├── git commit/push ──>      │
+        │                            │
+        │                            │  gh pr create
+        │                            ├──────────────>
+        │                            │  code review
+        │                            │  inline comments
+        │  fix findings  <───────────┤
+        │  git commit/push ──>       │
+        │                            │  approve + merge
+        │  <─────────────────────────┤
 ```
 
-## Account-Switching via gh CLI
-
-Beide Accounts sind in der lokalen `gh`-Session hinterlegt. Claude Code kann jederzeit zwischen ihnen wechseln:
+## Account-Konfiguration
 
 ```bash
-# Für Implementierung (commit, push, PR öffnen)
-gh auth switch --user dev-paul-fleischmann
+# Git-Identität für Commits (pre-commit hook prüft dies)
+git config user.name "dev-paul-fleischmann"
+git config user.email "dev@paul-fleischmann.com"
 
-# Für Review & Merge (approve, merge, inline-Kommentare)
+# gh CLI — immer paulefl (einziger aktiver Account)
 gh auth switch --user paulefl
 
-# Aktuell aktiven Account prüfen
+# Status prüfen
 gh auth status
+git config user.name
 ```
 
-**Konvention:** Nach jedem PR-Merge zurück auf `paulefl` wechseln (Default-Account).
-
-Claude Code wendet das Switching automatisch an — vor Implementierungsschritten auf `dev-paul-fleischmann`, vor Review-Schritten auf `paulefl`.
+**Regel:** `gh auth switch` wird nicht mehr auf `dev-paul-fleischmann` gesetzt.
+`paulefl` ist dauerhaft der aktive gh-Account.
 
 ## GitHub Konfiguration
 
@@ -86,5 +86,7 @@ Claude Code wendet das Switching automatisch an — vor Implementierungsschritte
 |---|---|
 | Default branch | `master` |
 | Branch protection | PR required, 1 approval (`paulefl`) |
-| Implementierung | `dev-paul-fleischmann` (write) |
+| Git commits | `dev-paul-fleischmann` (Identität in git config) |
+| gh CLI / API | `paulefl` (einziger aktiver Account) |
 | Review & Merge | `paulefl` (admin) |
+</content>
