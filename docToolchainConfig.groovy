@@ -9,7 +9,7 @@ inputFiles = [
     [file: 'user-guide/configuration-reference.adoc', formats: ['html']],
     [file: 'user-guide/block-attribute-reference.adoc', formats: ['html']],
     [file: 'user-guide/workflow-guide.adoc',          formats: ['html']],
-    [file: 'arc42/arc42.adoc',                        formats: ['html']],
+    [file: 'arc42/arc42.adoc',                        formats: ['html', 'pdf']],
 ]
 
 imageDirs = ["${inputPath}/images"]
