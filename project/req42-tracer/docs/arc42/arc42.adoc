@@ -26,17 +26,17 @@ This section briefly lists the main quality requirements and project goals.
 
 List technical, organizational, and regulatory constraints.
 
-==== Technical Constraints
+=== Technical Constraints
 
 - Language: Go 1.24+
 - CLI framework: Cobra
 - Configuration: YAML (.req42.yaml)
 
-==== Platform Compatibility
+=== Platform Compatibility
 
 Supports multiple platforms and operating systems.
 
-==== Organizational Constraints
+=== Organizational Constraints
 
 - Single-page interactive reports
 - No npm/Node.js dependencies for production
@@ -46,7 +46,7 @@ Supports multiple platforms and operating systems.
 Describes the system context and scope.
 
 [arch,id=system.context,aspice=SWE.2,req=REQ-PARSE-001,REQ-PARSE-002,REQ-PARSE-003]
-==== System Context Diagram
+=== System Context Diagram
 
 The project tool connects three primary data sources:
 
@@ -55,7 +55,7 @@ The project tool connects three primary data sources:
 - CI test reports (JUnit XML, go-test JSON)
 
 [arch,id=diag.context,parent=comp.system,aspice=SWE.2,impl=docs/arc42/diagrams/context.adoc,req=REQ-REPORT-001]
-==== Context Diagram (Bausteinsicht)
+=== Context Diagram (Bausteinsicht)
 
 Generated from `architecture.jsonc` via `scripts/generate-diagrams.sh`.
 
@@ -424,44 +424,9 @@ Links are merged into the builder before `BuildLinks()` executes.
 Describes dynamic behavior during execution.
 
 [arch,id=runtime.trace,parent=container.cli,aspice=SWE.2,impl=src/cmd/req42-tracer/graph_pipeline.go,req=REQ-REPORT-001,REQ-VALIDATE-001,SYS-TRACE-001]
-==== Trace Command Sequence
+=== Trace Command Sequence
 
-[mermaid]
-....
-sequenceDiagram
-    participant CLI as req42-tracer trace
-    participant Cfg as model.LoadConfig
-    participant Par as parser.ParseAllFromDir
-    participant Bau as parser.BausteinsichtParser
-    participant GC  as parser.ParseGoTestFiles
-    participant TR  as testresult.LoadAll
-    participant Grp as graph.NewBuilder
-    participant Rpt as report.HTMLReporter
-
-    CLI->>Cfg: LoadConfig(.req42.yaml)
-    Cfg-->>CLI: *Config
-
-    CLI->>Par: ParseAllFromDir(docs/requirements)
-    Par-->>CLI: *TraceabilityGraph (reqs)
-
-    CLI->>Par: ParseAllFromDir(docs/arc42)
-    Par-->>CLI: *TraceabilityGraph (arch)
-
-    CLI->>Bau: Parse(architecture.jsonc)
-    Bau-->>CLI: *TraceabilityGraph (bausteinsicht)
-
-    CLI->>GC: ParseGoTestFiles(src/)
-    GC-->>CLI: *TraceabilityGraph (testcode)
-
-    CLI->>TR: LoadAll(graph, config)
-    TR-->>CLI: (test results merged)
-
-    CLI->>Grp: MergeGraph(all graphs)
-    Grp-->>CLI: *TraceabilityGraph (complete)
-
-    CLI->>Rpt: GenerateReport()
-    Rpt-->>CLI: report.html
-....
+include::diagrams/runtime_trace.adoc[]
 
 Steps:
 
@@ -474,50 +439,12 @@ Steps:
 7. Generate report
 
 [arch,id=runtime.analyzegaps,parent=container.backend,aspice=SWE.2,impl=src/internal/graph/analysis.go,req=REQ-REPORT-002]
-==== AnalyzeGaps() Algorithm
+=== AnalyzeGaps() Algorithm
 
-[mermaid]
-....
-flowchart TD
-    A[AnalyzeGaps start] --> B[buildIndex\nbuild req→arch, arch→test maps]
-    B --> C{For each\nRequirement}
-    C --> D{Has arch\nlinks?}
-    D -- No --> E[→ OrphanRequirements]
-    D -- Yes --> C
-
-    B --> F{For each\nArchElement\nwith parent=}
-    F --> G{Has req=\nlinks?}
-    G -- No --> H[→ OrphanArchElements]
-    G -- Yes --> F
-    F --> I{Has impl=?}
-    I -- No --> F
-    I -- Yes --> J{Has integration\ntest-spec?}
-    J -- No --> K[→ UntestedArchElements]
-    J -- Yes --> F
-
-    B --> L{For each\nDesignElement}
-    L --> M{Has arch=\nparent?}
-    M -- No --> N[→ OrphanDesignElements]
-    M -- Yes --> L
-    L --> O{Has test-spec\nwith dsn=?}
-    O -- No --> P[→ UntestedDesignElements]
-    O -- Yes --> L
-
-    B --> Q{For each\nTestSpec}
-    Q --> R{Has req=\nor arch=?}
-    R -- No --> S[→ OrphanTestSpecs]
-    R -- Yes --> Q
-
-    B --> T{For each\nTestResult}
-    T --> U{LinkedSpec\nor LinkedCode?}
-    U -- No --> V[→ UntracedTestResults]
-    U -- Yes --> T
-
-    E & H & K & N & P & S & V --> W[Return GapAnalysisResult]
-....
+include::diagrams/runtime_analyzegaps.adoc[]
 
 [arch,id=runtime.watch,parent=container.cli,aspice=SWE.2,impl=src/cmd/req42-tracer/watch.go,req=REQ-WATCH-001]
-==== Watch Mode Sequence
+=== Watch Mode Sequence
 
 1. Start file watcher (fsnotify)
 2. On file change: rebuild graph, regenerate HTML
@@ -526,7 +453,7 @@ flowchart TD
 == 7. Deployment View
 
 [arch,id=deploy.cli,parent=container.cli,aspice=SWE.2,impl=src/cmd/req42-tracer,req=REQ-COMPAT-001,REQ-COMPAT-002,SYS-TOOL-001,SYS-QUAL-001]
-==== CLI Deployment
+=== CLI Deployment
 
 - Single compiled binary (`req42-tracer`)
 - Platform: Linux, macOS, Windows
@@ -576,21 +503,21 @@ Key ADRs are documented in `docs/arc42/ADRs/`.
 == 10. Quality Requirements
 
 [arch,id=quality.coverage,req=REQ-TESTING-001,SYS-TEST-001]
-==== Test Coverage
+=== Test Coverage
 
 - Parser: ≥90% unit test coverage
 - Graph builder: ≥85% coverage
 - Integration: ≥70% coverage
 
 [arch,id=quality.performance,req=REQ-PERF-001]
-==== Performance
+=== Performance
 
 - Trace generation: <1s for typical project (100 requirements)
 - HTML report generation: <2s
 - Watch mode reload: <500ms
 
 [arch,id=quality.security,req=REQ-VALIDATE-001,SYS-VALID-001]
-==== Security
+=== Security
 
 - No external network calls
 - All file I/O sandboxed to configured paths

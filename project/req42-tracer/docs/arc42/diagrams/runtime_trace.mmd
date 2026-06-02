@@ -1,0 +1,33 @@
+sequenceDiagram
+    participant CLI as req42-tracer trace
+    participant Cfg as model.LoadConfig
+    participant Par as parser.ParseAllFromDir
+    participant Bau as parser.BausteinsichtParser
+    participant GC  as parser.ParseGoTestFiles
+    participant TR  as testresult.LoadAll
+    participant Grp as graph.NewBuilder
+    participant Rpt as report.HTMLReporter
+
+    CLI->>Cfg: LoadConfig(.req42.yaml)
+    Cfg-->>CLI: *Config
+
+    CLI->>Par: ParseAllFromDir(docs/requirements)
+    Par-->>CLI: *TraceabilityGraph (reqs)
+
+    CLI->>Par: ParseAllFromDir(docs/arc42)
+    Par-->>CLI: *TraceabilityGraph (arch)
+
+    CLI->>Bau: Parse(architecture.jsonc)
+    Bau-->>CLI: *TraceabilityGraph (bausteinsicht)
+
+    CLI->>GC: ParseGoTestFiles(src/)
+    GC-->>CLI: *TraceabilityGraph (testcode)
+
+    CLI->>TR: LoadAll(graph, config)
+    TR-->>CLI: (test results merged)
+
+    CLI->>Grp: MergeGraph(all graphs)
+    Grp-->>CLI: *TraceabilityGraph (complete)
+
+    CLI->>Rpt: GenerateReport()
+    Rpt-->>CLI: report.html

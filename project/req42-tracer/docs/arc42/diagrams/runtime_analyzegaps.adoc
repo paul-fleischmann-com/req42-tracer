@@ -1,0 +1,40 @@
+.AnalyzeGaps() Algorithm
+[mermaid]
+....
+flowchart TD
+    A[AnalyzeGaps start] --> B[buildIndex\nbuild req→arch, arch→test maps]
+    B --> C{For each\nRequirement}
+    C --> D{Has arch\nlinks?}
+    D -- No --> E[→ OrphanRequirements]
+    D -- Yes --> C
+
+    B --> F{For each\nArchElement\nwith parent=}
+    F --> G{Has req=\nlinks?}
+    G -- No --> H[→ OrphanArchElements]
+    G -- Yes --> F
+    F --> I{Has impl=?}
+    I -- No --> F
+    I -- Yes --> J{Has integration\ntest-spec?}
+    J -- No --> K[→ UntestedArchElements]
+    J -- Yes --> F
+
+    B --> L{For each\nDesignElement}
+    L --> M{Has arch=\nparent?}
+    M -- No --> N[→ OrphanDesignElements]
+    M -- Yes --> L
+    L --> O{Has test-spec\nwith dsn=?}
+    O -- No --> P[→ UntestedDesignElements]
+    O -- Yes --> L
+
+    B --> Q{For each\nTestSpec}
+    Q --> R{Has req=\nor arch=?}
+    R -- No --> S[→ OrphanTestSpecs]
+    R -- Yes --> Q
+
+    B --> T{For each\nTestResult}
+    T --> U{LinkedSpec\nor LinkedCode?}
+    U -- No --> V[→ UntracedTestResults]
+    U -- Yes --> T
+
+    E & H & K & N & P & S & V --> W[Return GapAnalysisResult]
+....
