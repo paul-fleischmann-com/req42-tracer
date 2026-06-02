@@ -13,7 +13,7 @@ const sampleGoTest = `{"Time":"2026-03-15T10:00:00Z","Action":"run","Package":"g
 {"Time":"2026-03-15T10:00:03Z","Action":"fail","Package":"github.com/example/pkg","Test":"TestBar","Elapsed":0.3}
 `
 
-// [test-spec,id=TS-TR-010,req="REQ-TESTING-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-TR-010,req="REQ-TESTING-001",dsn=comp.testresult.gotest,aspice=SWE.4-BP4]
 // TestParseGoTest verifies that go test -json output is parsed correctly.
 func TestParseGoTest(t *testing.T) {
 	f := writeTempJSON(t, sampleGoTest)
@@ -26,7 +26,7 @@ func TestParseGoTest(t *testing.T) {
 	}
 }
 
-// [test-spec,id=TS-TR-011,req="REQ-TESTING-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-TR-011,req="REQ-TESTING-001",dsn=comp.testresult.gotest,aspice="SWE.5.BP3"]
 // TestParseGoTest_Statuses verifies that pass/fail statuses are correctly assigned.
 func TestParseGoTest_Statuses(t *testing.T) {
 	f := writeTempJSON(t, sampleGoTest)

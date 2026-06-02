@@ -6,7 +6,7 @@ import (
 	"github.com/paulefl/req42-tracer/src/internal/model"
 )
 
-// [test-spec,id=TS-RPT-058,req="REQ-REPORT-001",aspice="SWE.4.BP2"]
+// [test-spec,id=TS-RPT-058,req="REQ-REPORT-001",dsn=comp.report.graph,aspice="SWE.4.BP2"]
 // TestExportGraphData verifies ExportGraphData returns nodes and edges from a minimal graph.
 func TestExportGraphData(t *testing.T) {
 	// Create a minimal graph

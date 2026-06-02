@@ -24,7 +24,7 @@ func diagGraph() *model.TraceabilityGraph {
 	}
 }
 
-// [test-spec,id=TS-LSP-013,req="REQ-LSP-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-LSP-013,req="REQ-LSP-001",dsn=comp.lsp.diag,aspice=SWE.4-BP4]
 // TestComputeDiagnostics_UnknownReq verifies unknown req= IDs produce an error diagnostic.
 func TestComputeDiagnostics_UnknownReq(t *testing.T) {
 	g := diagGraph()
@@ -53,7 +53,7 @@ func TestComputeDiagnostics_UnknownReq(t *testing.T) {
 	}
 }
 
-// [test-spec,id=TS-LSP-014,req="REQ-LSP-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-LSP-014,req="REQ-LSP-001",dsn=comp.lsp.diag,aspice="SWE.5.BP3"]
 // TestComputeDiagnostics_KnownIDs verifies known IDs produce no diagnostics.
 func TestComputeDiagnostics_KnownIDs(t *testing.T) {
 	g := diagGraph()

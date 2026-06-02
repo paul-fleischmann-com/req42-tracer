@@ -34,7 +34,7 @@ func buildAnalysisGraph() *model.TraceabilityGraph {
 	}
 }
 
-// [test-spec,id=TS-GRAPH-017,req="REQ-GRAPH-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-GRAPH-017,req="REQ-GRAPH-001",dsn=comp.graph.analyzer,aspice=SWE.4-BP4]
 // TestNewAnalyzer verifies that NewAnalyzer stores the graph correctly.
 func TestNewAnalyzer(t *testing.T) {
 	g := buildAnalysisGraph()
@@ -44,7 +44,7 @@ func TestNewAnalyzer(t *testing.T) {
 	}
 }
 
-// [test-spec,id=TS-GRAPH-018,req="REQ-GRAPH-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-GRAPH-018,req="REQ-GRAPH-001",dsn=comp.graph.analyzer,aspice="SWE.5.BP3"]
 // TestAnalyzeGaps_OrphanRequirement verifies that uncovered requirements are detected.
 func TestAnalyzeGaps_OrphanRequirement(t *testing.T) {
 	a := NewAnalyzer(buildAnalysisGraph())

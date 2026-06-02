@@ -41,7 +41,7 @@ Acceptance Criteria:
  status=approved,reviewed-by=paulefl,reviewed-date=2026-05-07]
 == System shall parse AsciiDoc [req] blocks with metadata
 
-[test-spec,id=TS-PARSE-001,req=REQ-PARSE-001,aspice=SWE.4-BP3]
+[test-spec,id=TS-PARSE-001,dsn=comp.parser.adoc,req=REQ-PARSE-001,aspice=SWE.4-BP3]
 ====
 Test: ParseAllFromDir extracts all [req] blocks with correct metadata from AsciiDoc
 ====
@@ -69,7 +69,7 @@ Acceptance Criteria:
  status=approved,reviewed-by=paulefl,reviewed-date=2026-05-07]
 == System shall parse AsciiDoc [arch] blocks with hierarchy support
 
-[test-spec,id=TS-PARSE-002,req=REQ-PARSE-002,aspice=SWE.4-BP3]
+[test-spec,id=TS-PARSE-002,dsn=comp.parser.arch,req=REQ-PARSE-002,aspice=SWE.4-BP3]
 ====
 Test: ParseAllFromDir extracts all [arch] blocks with parent-child hierarchy
 ====
@@ -95,7 +95,7 @@ Acceptance Criteria:
  status=approved,reviewed-by=paulefl,reviewed-date=2026-05-07]
 == System shall load Bausteinsicht architecture models with JSONC
 
-[test-spec,id=TS-PARSE-003,req=REQ-PARSE-003,aspice=SWE.4-BP3]
+[test-spec,id=TS-PARSE-003,dsn=comp.parser.jsonc,req=REQ-PARSE-003,aspice=SWE.4-BP3]
 ====
 Test: BausteinsichtParser loads architecture.jsonc and flattens to dot-notation IDs
 ====
@@ -121,7 +121,7 @@ Acceptance Criteria:
  status=approved,reviewed-by=paulefl,reviewed-date=2026-05-07]
 == System shall construct and analyze traceability graph
 
-[test-spec,id=TS-GRAPH-001,req=REQ-GRAPH-001,aspice=SWE.5-BP4]
+[test-spec,id=TS-GRAPH-001,dsn=comp.graph.builder,req=REQ-GRAPH-001,aspice=SWE.5-BP4]
 ====
 Test: Builder constructs bidirectional traceability graph from requirements and architecture
 ====
@@ -237,6 +237,26 @@ Acceptance Criteria:
 - Unknown ID references are flagged as validation errors
 - Circular dependencies are detected and reported
 - Validation succeeds when project is clean
+
+[req,id=REQ-VALIDATE-002,version=1,priority=medium,aspice=SWE.1,
+ derives=SYS-VALID-001,
+ status=approved,reviewed-by=paulefl,reviewed-date=2026-06-02]
+== System shall detect arch blocks incorrectly used for SWE.3 detailed design
+
+[test-spec,id=TS-VALIDATE-002,req=REQ-VALIDATE-002,aspice=SWE.4-BP4]
+====
+Test: validate rule arch-used-for-swe3 flags [arch,aspice=SWE.3,parent=X] blocks
+====
+
+The system shall provide a validation rule `arch-used-for-swe3` that detects
+`[arch]` blocks tagged `aspice=SWE.3` with a `parent=` reference to an `aspice=SWE.2`
+architecture element. These blocks should be declared as `[dsn]` (detailed design) instead.
+
+Acceptance Criteria:
+- Rule `arch-used-for-swe3` is configurable in `.req42.yaml` (error/warning/off)
+- Each mistyped block is reported with its ID and source location
+- Rule fires only when the parent element exists and has `aspice=SWE.2`
+- `[arch,aspice=SWE.3]` blocks without a SWE.2 parent are not flagged
 
 [req,id=REQ-CONFIG-001,version=1,priority=high,aspice=SWE.1,
  derives=SYS-CONFIG-001,

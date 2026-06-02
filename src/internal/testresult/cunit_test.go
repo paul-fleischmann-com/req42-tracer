@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// [test-spec,id=TS-CUNIT-001,req="SWR-CUNIT-PARSER-001",aspice=SWE.4-BP4]
+// [test-spec,id=TS-CUNIT-001,req="SWR-CUNIT-PARSER-001",dsn=comp.testresult.cunit,aspice=SWE.4-BP4]
 // ParseCUnit correctly parses passed and failed test cases from CUnit XML
 func TestParseCUnit(t *testing.T) {
 	results, err := ParseCUnit(filepath.Join("testdata", "cunit_results.xml"), "test", "linux")

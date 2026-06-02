@@ -24,7 +24,7 @@ func newTestGraph() *model.TraceabilityGraph {
 	}
 }
 
-// [test-spec,id=TS-GRAPH-001,req="REQ-GRAPH-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-GRAPH-001,req="REQ-GRAPH-001",dsn=comp.graph.builder,aspice=SWE.4-BP4]
 // TestNewBuilder verifies that NewBuilder initializes an empty graph.
 func TestNewBuilder(t *testing.T) {
 	b := NewBuilder()
@@ -34,7 +34,7 @@ func TestNewBuilder(t *testing.T) {
 	}
 }
 
-// [test-spec,id=TS-GRAPH-002,req="REQ-GRAPH-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-GRAPH-002,req="REQ-GRAPH-001",dsn=comp.graph.builder,aspice="SWE.5.BP3"]
 // TestMergeGraph verifies that graphs are correctly merged.
 func TestMergeGraph(t *testing.T) {
 	b := NewBuilder()

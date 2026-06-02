@@ -2,7 +2,7 @@ package model
 
 import "testing"
 
-// [test-spec,id=TS-IMPL-001,req="SWR-IMPL-REF-001",aspice=SWE.4-BP4]
+// [test-spec,id=TS-IMPL-001,req="SWR-IMPL-REF-001",dsn=comp.model.implref,aspice=SWE.4-BP4]
 // ParseImplRef — Go package path (no file extension → IsFile=false)
 func TestParseImplRef_Package(t *testing.T) {
 	r := ParseImplRef("src/internal/parser")

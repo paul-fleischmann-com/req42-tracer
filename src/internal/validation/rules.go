@@ -51,6 +51,7 @@ func (e *RuleEngine) Run() []*RuleResult {
 		"missing-test-spec":           e.ruleMissingTestSpec,
 		"missing-impl":                e.ruleMissingImpl,
 		"impl-file-not-found":         e.ruleImplFileNotFound,
+		"arch-used-for-swe3":          e.ruleArchUsedForSWE3,
 		"orphan-architecture":         e.ruleOrphanArchitecture,
 		"orphan-tests":                e.ruleOrphanTests,
 		"stale-traces":                e.ruleStaleTraces,
@@ -332,6 +333,30 @@ func (e *RuleEngine) ruleImplFileNotFound(sev Severity) *RuleResult {
 	}
 	for _, dsn := range g.DesignElements {
 		check(dsn.Impl, dsn.ID, dsn.FilePath, dsn.LineNumber)
+	}
+	return result
+}
+
+// ruleArchUsedForSWE3 flags [arch] blocks that are tagged aspice=SWE.3 and have a parent=
+// pointing to an aspice=SWE.2 arch element. These should be declared as [dsn] blocks instead.
+// Implements REQ-VALIDATE-002.
+func (e *RuleEngine) ruleArchUsedForSWE3(sev Severity) *RuleResult {
+	g := e.analyzer.GetGraph()
+	result := &RuleResult{RuleID: "arch-used-for-swe3", Severity: sev}
+	for _, arch := range g.ArchElements {
+		if arch.ASPICE != "SWE.3" || arch.Parent == "" {
+			continue
+		}
+		parent, exists := g.ArchElements[arch.Parent]
+		if !exists || parent.ASPICE != "SWE.2" {
+			continue
+		}
+		result.Violations = append(result.Violations, Violation{
+			Rule:     "arch-used-for-swe3",
+			Severity: sev,
+			Message:  fmt.Sprintf("[arch,id=%s,aspice=SWE.3] should be [dsn,arch=%s] — use [dsn] blocks for detailed design (SWE.3)", arch.ID, arch.Parent),
+			Location: fmt.Sprintf("%s:%d", arch.FilePath, arch.LineNumber),
+		})
 	}
 	return result
 }

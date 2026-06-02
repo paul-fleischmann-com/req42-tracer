@@ -110,7 +110,7 @@ Runs the traceability analysis and produces the traceability matrix report.
 
 Analyses the traceability graph and reports orphan elements and missing links.
 
-[arch,id=comp.validate,parent=comp.system,aspice=SWE.2,impl=cmd/req42-tracer/validate.go,req=REQ-VALIDATE-001,REQ-CONFIG-001]
+[arch,id=comp.validate,parent=comp.system,aspice=SWE.2,impl=cmd/req42-tracer/validate.go,req=REQ-VALIDATE-001,REQ-CONFIG-001,REQ-VALIDATE-002]
 ==== Validate Command Component
 
 Validates project structure, configuration, and cross-references without producing a full report.
@@ -148,7 +148,7 @@ include::diagrams/cli.adoc[]
 
 The system consists of the following top-level components:
 
-[arch,id=comp.parser,parent=comp.system,aspice=SWE.2,impl=internal/parser,req=REQ-PARSE-001,REQ-PARSE-002,REQ-PARSE-003,REQ-INIT-001]
+[arch,id=comp.parser,parent=comp.system,aspice=SWE.2,impl=internal/parser,req=REQ-PARSE-001,REQ-PARSE-002,REQ-PARSE-003,REQ-INIT-001,SWR-C-PARSER-001]
 ==== Parser Component
 
 Reads AsciiDoc files and Bausteinsicht models, extracts blocks.
@@ -168,12 +168,12 @@ Validates process coverage against PAM 4.0.
 
 Produces CLI and HTML reports.
 
-[arch,id=comp.model,parent=comp.system,aspice=SWE.2,impl=internal/model,req=REQ-CONFIG-001]
+[arch,id=comp.model,parent=comp.system,aspice=SWE.2,impl=internal/model,req=REQ-CONFIG-001,SWR-IMPL-REF-001]
 ==== Domain Model
 
 Shared data types (`Requirement`, `ArchElement`, `TraceLink`, `Graph`) and configuration loading.
 
-[arch,id=comp.testresult,parent=comp.system,aspice=SWE.2,impl=internal/testresult,req=REQ-TESTING-001]
+[arch,id=comp.testresult,parent=comp.system,aspice=SWE.2,impl=internal/testresult,req=REQ-TESTING-001,SWR-UNITY-PARSER-001,SWR-CUNIT-PARSER-001]
 ==== Test Result Loader
 
 Loads test execution results from JUnit XML and go-test JSON formats for traceability.
@@ -183,29 +183,29 @@ Loads test execution results from JUnit XML and go-test JSON formats for traceab
 
 Embedded default templates (req42.adoc, arc42.adoc, architecture.jsonc, .req42.yaml) used by the init command.
 
-[arch,id=diag.backend_level2,parent=comp.system,aspice=SWE.3,impl=docs/arc42/diagrams/backend_level2.adoc,req=REQ-REPORT-001]
+[arch,id=diag.backend_level2,parent=comp.system,aspice=SWE.2,impl=docs/arc42/diagrams/backend_level2.adoc,req=REQ-REPORT-001]
 ==== Component Diagram — Backend Level 2 (Bausteinsicht)
 
 include::diagrams/backend_level2.adoc[]
 
 === 5.2 Level 2 — Parser Subcomponents
 
-[arch,id=comp.parser.adoc,parent=comp.parser,aspice=SWE.3,impl=internal/parser/adoc.go,req=REQ-PARSE-001,REQ-INIT-001]
+[dsn,id=comp.parser.adoc,arch=comp.parser,aspice=SWE.3,impl=internal/parser/adoc.go,req=REQ-PARSE-001,REQ-INIT-001]
 ==== AsciiDoc Scanner
 
 Extracts block attributes from .adoc files using regex.
 
-[arch,id=comp.parser.jsonc,parent=comp.parser,aspice=SWE.3,impl=internal/parser/bausteinsicht.go,req=REQ-PARSE-003]
+[dsn,id=comp.parser.jsonc,arch=comp.parser,aspice=SWE.3,impl=internal/parser/bausteinsicht.go,req=REQ-PARSE-003]
 ==== Bausteinsicht Loader
 
 Parses JSONC architecture model.
 
-[arch,id=comp.parser.arch,parent=comp.parser,aspice=SWE.3,impl=internal/parser/adoc.go,req=REQ-PARSE-002]
+[dsn,id=comp.parser.arch,arch=comp.parser,aspice=SWE.3,impl=internal/parser/adoc.go,req=REQ-PARSE-002]
 ==== Architecture Block Parser
 
 Parses AsciiDoc [arch] blocks with hierarchy support and requirement linking.
 
-[arch,id=comp.parser.gocode,parent=comp.parser,aspice=SWE.3,impl=internal/parser/gocode.go,req=REQ-TESTING-001]
+[dsn,id=comp.parser.gocode,arch=comp.parser,aspice=SWE.3,impl=internal/parser/gocode.go,req=REQ-TESTING-001]
 ==== Go Test-Code Parser
 
 Parses Go test files and extracts `[test-spec]` annotations for explicit
@@ -213,73 +213,73 @@ TestResult→TestSpec linkage (see ADR-003).
 
 === 5.3 Level 2 — Graph Subcomponents
 
-[arch,id=comp.graph.builder,parent=comp.graph,aspice=SWE.3,impl=internal/graph/build.go,req=REQ-GRAPH-001]
+[dsn,id=comp.graph.builder,arch=comp.graph,aspice=SWE.3,impl=internal/graph/build.go,req=REQ-GRAPH-001]
 ==== Graph Builder
 
 Constructs traceability graph from parsed elements.
 
-[arch,id=comp.graph.analyzer,parent=comp.graph,aspice=SWE.3,impl=internal/graph/analysis.go,req=REQ-REPORT-002,REQ-VALIDATE-001]
+[dsn,id=comp.graph.analyzer,arch=comp.graph,aspice=SWE.3,impl=internal/graph/analysis.go,req=REQ-REPORT-002,REQ-VALIDATE-001]
 ==== Graph Analyzer
 
 Detects gaps, orphans, stale traces, and validates coverage.
 
 === 5.4 Level 2 — Report Subcomponents
 
-[arch,id=comp.report.graph,parent=comp.report,aspice=SWE.3,impl=internal/report/graph.go,req=REQ-REPORT-001]
+[dsn,id=comp.report.graph,arch=comp.report,aspice=SWE.3,impl=internal/report/graph.go,req=REQ-REPORT-001]
 ==== Graph Data Exporter
 
 Converts TraceabilityGraph to D3.js-compatible node/edge structure including
 DesignElement nodes (type "dsn", group 4).
 
-[arch,id=comp.report.matrix,parent=comp.report,aspice=SWE.3,impl=internal/report/matrix.go,req=REQ-REPORT-001,REQ-REPORT-002]
+[dsn,id=comp.report.matrix,arch=comp.report,aspice=SWE.3,impl=internal/report/matrix.go,req=REQ-REPORT-001,REQ-REPORT-002]
 ==== Matrix Builder
 
 Builds Requirement × ArchElement × DesignElement traceability matrix with
 coverage statistics. Exports to CSV via `ExportMatrixToCSV`.
 
-[arch,id=comp.report.aspice,parent=comp.report,aspice=SWE.3,impl=internal/report/aspice_data.go,req=REQ-ASPICE-001]
+[dsn,id=comp.report.aspice,arch=comp.report,aspice=SWE.3,impl=internal/report/aspice_data.go,req=REQ-ASPICE-001]
 ==== ASPICE Dashboard Data
 
 Computes ASPICE PAM 4.0 BP-coverage metrics for HTML dashboard rendering.
 
-[arch,id=comp.report.html,parent=comp.report,aspice=SWE.3,impl=internal/report/html.go,req=REQ-REPORT-001]
+[dsn,id=comp.report.html,arch=comp.report,aspice=SWE.3,impl=internal/report/html.go,req=REQ-REPORT-001]
 ==== HTML Report Generator
 
 Generates interactive HTML report (Graph View, Matrix View, ASPICE Dashboard,
 Gaps Tab) by injecting JSON into the embedded D3.js template.
 
-[arch,id=comp.report.table,parent=comp.report,aspice=SWE.3,impl=internal/report/table.go,req=REQ-REPORT-001,REQ-REPORT-002]
+[dsn,id=comp.report.table,arch=comp.report,aspice=SWE.3,impl=internal/report/table.go,req=REQ-REPORT-001,REQ-REPORT-002]
 ==== CLI Table Reporter
 
 Renders traceability matrix and gap analysis as ASCII/Markdown table output.
 
 === 5.5 Level 2 — TestResult Subcomponents
 
-[arch,id=comp.testresult.gotest,parent=comp.testresult,aspice=SWE.3,impl=internal/testresult/gotest.go,req=REQ-TESTING-001]
+[dsn,id=comp.testresult.gotest,arch=comp.testresult,aspice=SWE.3,impl=internal/testresult/gotest.go,req=REQ-TESTING-001]
 ==== Go-Test JSON Parser
 
 Parses `go test -json` output format into TestResult objects.
 ID format: `shortPackage::TestName` (e.g. `parser::TestBausteinsichtParser_Parse`).
 
-[arch,id=comp.testresult.junit,parent=comp.testresult,aspice=SWE.3,impl=internal/testresult/junit.go,req=REQ-TESTING-001]
+[dsn,id=comp.testresult.junit,arch=comp.testresult,aspice=SWE.3,impl=internal/testresult/junit.go,req=REQ-TESTING-001]
 ==== JUnit XML Parser
 
 Parses JUnit XML test result files. Supports Java dot-separated classnames
 and Go slash-separated package paths via `shortPackage()`.
 
-[arch,id=comp.testresult.loader,parent=comp.testresult,aspice=SWE.3,impl=internal/testresult/loader.go,req=REQ-TESTING-001]
+[dsn,id=comp.testresult.loader,arch=comp.testresult,aspice=SWE.3,impl=internal/testresult/loader.go,req=REQ-TESTING-001]
 ==== Test Result Loader
 
 Dispatches to format-specific parsers via `Loader.Load()` and bulk-loads
 all configured test sources via `LoadAll()`.
 
-[arch,id=comp.testresult.unity,parent=comp.testresult,aspice=SWE.3,impl=src/internal/testresult/unity.go,req=SWR-UNITY-PARSER-001]
+[dsn,id=comp.testresult.unity,arch=comp.testresult,aspice=SWE.3,impl=src/internal/testresult/unity.go,req=SWR-UNITY-PARSER-001]
 ==== Unity XML Parser
 
 Parses Unity test-runner XML output format into TestResult objects.
 Used for Embedded/AUTOSAR C unit tests. Format key: `unity`.
 
-[arch,id=comp.testresult.cunit,parent=comp.testresult,aspice=SWE.3,impl=src/internal/testresult/cunit.go,req=SWR-CUNIT-PARSER-001]
+[dsn,id=comp.testresult.cunit,arch=comp.testresult,aspice=SWE.3,impl=src/internal/testresult/cunit.go,req=SWR-CUNIT-PARSER-001]
 ==== CUnit Automated XML Parser
 
 Parses CUnit `CUnitAutomated.xml` output into TestResult objects.
@@ -287,14 +287,14 @@ Handles `<CUNIT_RUN_TEST_SUCCESS>` and `<CUNIT_RUN_TEST_FAILURE>` elements. Form
 
 === 5.5.1 Level 2 — C-Source Parser
 
-[arch,id=comp.parser.c,parent=comp.parser,aspice=SWE.3,impl=src/internal/parser/cparser.go,req=SWR-C-PARSER-001]
+[dsn,id=comp.parser.c,arch=comp.parser,aspice=SWE.3,impl=src/internal/parser/cparser.go,req=SWR-C-PARSER-001]
 ==== C-Quellcode-Parser
 
 Walks configured `c-sources` directories, extracts `@req`, `@arch`, `@aspice` and
 inline `req:`/`arch:` annotations from `.c`/`.h` files, and returns a map of
 `archElementID → file:func:line` impl-ref patches applied via `Builder.ApplyImplRefs()`.
 
-[arch,id=comp.model.implref,parent=comp.model,aspice=SWE.3,impl=src/internal/model/impl.go,req=SWR-IMPL-REF-001]
+[dsn,id=comp.model.implref,arch=comp.model,aspice=SWE.3,impl=src/internal/model/impl.go,req=SWR-IMPL-REF-001]
 ==== ImplRef Model
 
 `ParseImplRef(s)` parses all four `impl=` formats (Go package, file, file:func, file:func:line).
@@ -302,26 +302,26 @@ inline `req:`/`arch:` annotations from `.c`/`.h` files, and returns a map of
 
 === 5.6 Level 2 — LSP Subcomponents
 
-[arch,id=comp.lsp.complete,parent=comp.lsp,aspice=SWE.3,impl=internal/lsp/complete.go,req=REQ-LSP-001]
+[dsn,id=comp.lsp.complete,arch=comp.lsp,aspice=SWE.3,impl=internal/lsp/complete.go,req=REQ-LSP-001]
 ==== LSP Completion Provider
 
 Detects `req=`, `arch=`, `test-spec=` attribute context from cursor position
 and returns filtered, sorted CompletionList from the traceability graph.
 
-[arch,id=comp.lsp.hover,parent=comp.lsp,aspice=SWE.3,impl=internal/lsp/hover.go,req=REQ-LSP-001]
+[dsn,id=comp.lsp.hover,arch=comp.lsp,aspice=SWE.3,impl=internal/lsp/hover.go,req=REQ-LSP-001]
 ==== LSP Hover Provider
 
 Detects `req=`, `arch=`, `test-spec=` value under cursor and returns Markdown
 tooltip with title, description and metadata from the traceability graph.
 
-[arch,id=comp.lsp.diag,parent=comp.lsp,aspice=SWE.3,impl=internal/lsp/diag.go,req=REQ-LSP-001]
+[dsn,id=comp.lsp.diag,arch=comp.lsp,aspice=SWE.3,impl=internal/lsp/diag.go,req=REQ-LSP-001]
 ==== LSP Diagnostics Provider
 
 Scans document lines for unknown `req=`, `arch=`, `test-spec=` values and
 publishes `textDocument/publishDiagnostics` notifications with error-severity
 ranges pointing to the unknown ID span.
 
-[arch,id=comp.lsp.godef,parent=comp.lsp,aspice=SWE.3,impl=internal/lsp/godef.go,req=REQ-LSP-001]
+[dsn,id=comp.lsp.godef,arch=comp.lsp,aspice=SWE.3,impl=internal/lsp/godef.go,req=REQ-LSP-001]
 ==== LSP Go-to-Definition Provider
 
 Resolves `req=`, `arch=`, `test-spec=` value under cursor to a `Location`
@@ -340,14 +340,14 @@ Supports 6 plugin categories: parser, enricher, validator, linker, reporter, not
 ==== Integration Test: Plugin System stdin/stdout JSON protocol
 Tests that the plugin runner correctly communicates with external binaries via stdin/stdout JSON.
 
-[arch,id=comp.plugin.runner,parent=comp.plugin,aspice=SWE.3,impl=internal/plugin/plugin.go,req=REQ-PLUGIN-001]
+[dsn,id=comp.plugin.runner,arch=comp.plugin,aspice=SWE.3,impl=internal/plugin/plugin.go,req=REQ-PLUGIN-001]
 ==== Plugin Runner
 
 Core execution engine: starts subprocess via `exec.CommandContext`, writes JSON request
 to stdin, reads JSON response from stdout, applies 30s timeout. Returns typed result
 or error on non-zero exit code.
 
-[arch,id=comp.plugin.parsers,parent=comp.plugin,aspice=SWE.3,impl=internal/plugin/plugin.go,req=REQ-PLUGIN-001]
+[dsn,id=comp.plugin.parsers,arch=comp.plugin,aspice=SWE.3,impl=internal/plugin/plugin.go,req=REQ-PLUGIN-001]
 ==== Parser Runners
 
 Typed runners for each parser plugin type:
@@ -358,29 +358,44 @@ Typed runners for each parser plugin type:
 - `RunTestSpecParser` → `[]*model.TestSpec`
 - `RunDesignParser` → `[]*model.DesignElement`
 
-[arch,id=comp.plugin.enricher,parent=comp.plugin,aspice=SWE.3,impl=internal/plugin/plugin.go,req=REQ-PLUGIN-002]
+[dsn,id=comp.plugin.enricher,arch=comp.plugin,aspice=SWE.3,impl=internal/plugin/plugin.go,req=REQ-PLUGIN-002]
 ==== Enricher Runner
 
 Calls enricher plugin with graph snapshot, receives `[]EnrichmentPatch`,
 applies patches to `Requirements`, `ArchElements`, `TestSpecs` via `ApplyEnrichments`.
 
-[arch,id=comp.plugin.validator,parent=comp.plugin,aspice=SWE.3,impl=internal/plugin/plugin.go,req=REQ-PLUGIN-002]
+[dsn,id=comp.plugin.validator,arch=comp.plugin,aspice=SWE.3,impl=internal/plugin/plugin.go,req=REQ-PLUGIN-002]
 ==== Validator Runner
 
 Calls validator plugin with graph snapshot, returns `[]ValidationIssue`
 (rule, severity, element_id, message). Issues are collected alongside built-in validation results.
 
-[arch,id=comp.plugin.linker,parent=comp.plugin,aspice=SWE.3,impl=internal/plugin/plugin.go,req=REQ-PLUGIN-002]
+[dsn,id=comp.plugin.linker,arch=comp.plugin,aspice=SWE.3,impl=internal/plugin/plugin.go,req=REQ-PLUGIN-002]
 ==== Linker Runner
 
 Calls linker plugin with graph snapshot, returns `[]*model.TraceLink`.
 Links are merged into the builder before `BuildLinks()` executes.
 
-[arch,id=comp.plugin.reporter,parent=comp.plugin,aspice=SWE.3,impl=internal/plugin/plugin.go,req=REQ-PLUGIN-002]
+[dsn,id=comp.plugin.reporter,arch=comp.plugin,aspice=SWE.3,impl=internal/plugin/plugin.go,req=REQ-PLUGIN-002]
 ==== Reporter & Notifier Runner
 
 - `RunReporter` — calls reporter plugin with graph + output_dir, returns generated file paths
 - `RunNotifier` — calls notifier plugin with gaps payload as side-effect trigger
+
+[test-spec,id=TS-PLUGIN-PARSERS-001,dsn=comp.plugin.parsers,req=REQ-PLUGIN-001,aspice=SWE.4-BP4]
+==== Unit Test: Plugin Parser Runners execute typed stdin/stdout protocol
+
+[test-spec,id=TS-PLUGIN-ENRICHER-001,dsn=comp.plugin.enricher,req=REQ-PLUGIN-002,aspice=SWE.4-BP4]
+==== Unit Test: Plugin Enricher Runner applies patches to graph
+
+[test-spec,id=TS-PLUGIN-VALIDATOR-001,dsn=comp.plugin.validator,req=REQ-PLUGIN-002,aspice=SWE.4-BP4]
+==== Unit Test: Plugin Validator Runner returns validation issues
+
+[test-spec,id=TS-PLUGIN-LINKER-001,dsn=comp.plugin.linker,req=REQ-PLUGIN-002,aspice=SWE.4-BP4]
+==== Unit Test: Plugin Linker Runner merges trace links into graph
+
+[test-spec,id=TS-PLUGIN-REPORTER-001,dsn=comp.plugin.reporter,req=REQ-PLUGIN-002,aspice=SWE.4-BP4]
+==== Unit Test: Plugin Reporter Runner generates output files
 
 == 6. Runtime View
 

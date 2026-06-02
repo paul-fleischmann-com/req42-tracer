@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-// [test-spec,id=TS-TR-018,req="REQ-TESTING-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-TR-018,req="REQ-TESTING-001",dsn=comp.testresult.loader,aspice=SWE.4-BP4]
 // TestLoader_Load_JUnit verifies that Loader dispatches to ParseJUnit for junit format.
 func TestLoader_Load_JUnit(t *testing.T) {
 	f := writeTempXML(t, sampleJUnit)
@@ -18,7 +18,7 @@ func TestLoader_Load_JUnit(t *testing.T) {
 	}
 }
 
-// [test-spec,id=TS-TR-019,req="REQ-TESTING-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-TR-019,req="REQ-TESTING-001",dsn=comp.testresult.loader,aspice="SWE.5.BP3"]
 // TestLoader_Load_GoTest verifies that Loader dispatches to ParseGoTest for go-test format.
 func TestLoader_Load_GoTest(t *testing.T) {
 	f := writeTempJSON(t, sampleGoTest)

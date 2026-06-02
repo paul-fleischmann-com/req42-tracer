@@ -35,6 +35,9 @@ rules:
   # Tests
   missing-test-spec: warning
 
+  # Architecture / Design
+  arch-used-for-swe3: warning
+
   # Traceability
   stale-traces: warning
   missing-impl: warning

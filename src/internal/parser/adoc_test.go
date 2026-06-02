@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-// [test-spec,id=TS-PARSE-001,req="REQ-PARSE-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-PARSE-001,req="REQ-PARSE-001",dsn=comp.parser.adoc,aspice=SWE.4-BP4]
 // TestParseRequirements verifies that [req] blocks are correctly parsed from AsciiDoc.
 func TestParseRequirements(t *testing.T) {
 	content := `= Test Doc
@@ -55,7 +55,7 @@ Description text.
 	}
 }
 
-// [test-spec,id=TS-PARSE-002,req="REQ-PARSE-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-PARSE-002,req="REQ-PARSE-001",dsn=comp.parser.adoc,aspice="SWE.5.BP3"]
 // TestParseRequirements_MissingID verifies that blocks without id are skipped.
 func TestParseRequirements_MissingID(t *testing.T) {
 	content := `[req,version=1]
