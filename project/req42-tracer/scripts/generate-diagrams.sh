@@ -107,7 +107,7 @@ if [[ "$INCLUDE_FORMAT" == "svg" ]]; then
     view="$(basename "$mmd" .mmd)"
     svg="$OUT/${view}.svg"
     mmdc -i "$mmd" -o "$svg" --backgroundColor transparent \
-         --puppeteerConfig "$PUPPETEER_CFG" --quiet
+         -p "$PUPPETEER_CFG" --quiet
     echo "  ✓ ${view}.svg"
   done
   echo ""
