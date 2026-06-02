@@ -309,7 +309,8 @@ func TestRunTestResultParser_PluginNotFound(t *testing.T) {
 	}
 }
 
-// helper: ensure Request is correctly serialised (used by all runners)
+// [test-spec,id=TS-PLUGIN-SERIAL-001,req=REQ-PLUGIN-001,aspice=SWE.4-BP4]
+// Plugin Request JSON serialisation round-trip
 func TestRequestSerialization(t *testing.T) {
 	req := Request{File: "test.xml", Project: "proj"}
 	b, err := json.Marshal(req)

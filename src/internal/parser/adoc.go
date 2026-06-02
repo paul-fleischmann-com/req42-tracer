@@ -342,12 +342,14 @@ func (p *ADocParser) parseDsnBlock(blockLine string, lineNum int, project string
 }
 
 // extractAttributes parses block attributes from a line like [type,attr1=val1,attr2=val2]
+// Multi-value attributes (req=A,B,C) are supported: parts without '=' are appended
+// to the previous attribute's value as comma-separated continuations.
 func extractAttributes(line string) map[string]string {
 	attrs := make(map[string]string)
 
 	// Find the block tag: [...]
 	start := strings.Index(line, "[")
-	end := strings.Index(line, "]")
+	end := strings.LastIndex(line, "]")
 	if start < 0 || end < 0 || start >= end {
 		return attrs
 	}
@@ -355,11 +357,13 @@ func extractAttributes(line string) map[string]string {
 	content := line[start+1 : end]
 	parts := strings.Split(content, ",")
 
+	var lastKey string
 	for i, part := range parts {
 		part = strings.TrimSpace(part)
 		if i == 0 {
 			// First part is the block type (req, arch, test-spec)
 			attrs["type"] = part
+			lastKey = ""
 			continue
 		}
 
@@ -372,6 +376,10 @@ func extractAttributes(line string) map[string]string {
 				value = value[1 : len(value)-1]
 			}
 			attrs[key] = value
+			lastKey = key
+		} else if lastKey != "" && part != "" {
+			// No '=' — continuation of previous multi-value attribute (e.g. req=A,B,C)
+			attrs[lastKey] = attrs[lastKey] + "," + part
 		}
 	}
 

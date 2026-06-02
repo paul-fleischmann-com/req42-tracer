@@ -158,7 +158,7 @@ Reads AsciiDoc files and Bausteinsicht models, extracts blocks.
 
 Builds and analyzes the traceability graph.
 
-[arch,id=comp.aspice,parent=comp.system,aspice=SWE.2,impl=internal/aspice,req=REQ-ASPICE-001,REQ-TESTING-001]
+[arch,id=comp.aspice,parent=comp.system,aspice=SWE.2,impl=internal/aspice,req=REQ-ASPICE-001,REQ-TESTING-001,SYS-ASPICE-001]
 ==== ASPICE Checker
 
 Validates process coverage against PAM 4.0.
@@ -330,11 +330,15 @@ Supports cross-file navigation to any parsed source file.
 
 === 5.7 Level 2 — Plugin Subcomponents
 
-[arch,id=comp.plugin,aspice=SWE.2,impl=internal/plugin/plugin.go,req=REQ-PLUGIN-001,REQ-PLUGIN-002]
+[arch,id=comp.plugin,aspice=SWE.2,impl=internal/plugin/plugin.go,req=REQ-PLUGIN-001,REQ-PLUGIN-002,REQ-PLUGIN-003]
 ==== Plugin System
 
 Provides stdin/stdout JSON protocol runner for external plugin binaries.
 Supports 6 plugin categories: parser, enricher, validator, linker, reporter, notifier.
+
+[test-spec,id=TS-PLUGIN-INTEGRATION-001,arch=comp.plugin,req=REQ-PLUGIN-001,aspice=SWE.5]
+==== Integration Test: Plugin System stdin/stdout JSON protocol
+Tests that the plugin runner correctly communicates with external binaries via stdin/stdout JSON.
 
 [arch,id=comp.plugin.runner,parent=comp.plugin,aspice=SWE.3,impl=internal/plugin/plugin.go,req=REQ-PLUGIN-001]
 ==== Plugin Runner
@@ -382,7 +386,7 @@ Links are merged into the builder before `BuildLinks()` executes.
 
 Describes dynamic behavior during execution.
 
-[arch,id=runtime.trace,aspice=SWE.2,req=REQ-REPORT-001,REQ-VALIDATE-001]
+[arch,id=runtime.trace,aspice=SWE.2,req=REQ-REPORT-001,REQ-VALIDATE-001,SYS-TRACE-001]
 ==== Trace Command Sequence
 
 [mermaid]
@@ -484,7 +488,7 @@ flowchart TD
 
 == 7. Deployment View
 
-[arch,id=deploy.cli,req=REQ-COMPAT-001,REQ-COMPAT-002]
+[arch,id=deploy.cli,req=REQ-COMPAT-001,REQ-COMPAT-002,SYS-TOOL-001,SYS-QUAL-001]
 ==== CLI Deployment
 
 - Single compiled binary (`req42-tracer`)
@@ -497,7 +501,7 @@ flowchart TD
 
 Central configuration via `.req42.yaml`:
 
-[arch,id=concept.config,req=REQ-CONFIG-001,REQ-INIT-001]
+[arch,id=concept.config,req=REQ-CONFIG-001,REQ-INIT-001,SYS-CONFIG-001]
 ==== Configuration
 
 - Project definitions (multi-project support)
@@ -534,7 +538,7 @@ Key ADRs are documented in `docs/arc42/ADRs/`.
 
 == 10. Quality Requirements
 
-[arch,id=quality.coverage,req=REQ-TESTING-001]
+[arch,id=quality.coverage,req=REQ-TESTING-001,SYS-TEST-001]
 ==== Test Coverage
 
 - Parser: ≥90% unit test coverage
@@ -548,7 +552,7 @@ Key ADRs are documented in `docs/arc42/ADRs/`.
 - HTML report generation: <2s
 - Watch mode reload: <500ms
 
-[arch,id=quality.security,req=REQ-VALIDATE-001]
+[arch,id=quality.security,req=REQ-VALIDATE-001,SYS-VALID-001]
 ==== Security
 
 - No external network calls
