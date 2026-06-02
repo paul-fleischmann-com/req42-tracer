@@ -120,6 +120,86 @@ SWE.1.BP2 and SWE.5.BP3 should improve as the new requirement is fully traced.
 
 ---
 
+== C-Projekt-Workflow
+
+C/Embedded-Projekte (AUTOSAR, ISO 26262) können Traceability-Marker direkt im C-Quellcode pflegen.
+
+=== Schritt 1 — .req42.yaml konfigurieren
+
+[source,yaml]
+----
+c-sources:
+  - paths:
+      - src/hal/
+      - src/drivers/
+
+test-results:
+  - format: unity
+    path: reports/unity-results.xml
+  - format: cunit
+    path: reports/CUnitAutomated.xml
+
+reports:
+  html:
+    source-base-url: "https://github.com/org/repo/blob/master"
+----
+
+=== Schritt 2 — C-Quellcode annotieren
+
+[source,c]
+----
+/**
+ * @req SWR-GPIO-001
+ * @arch comp.hal.gpio
+ * @aspice SWE.3
+ */
+void gpio_init(uint8_t pin, gpio_direction_t dir) {
+    // implementation
+}
+
+/* req: SWR-GPIO-002, arch: comp.hal.gpio */
+int gpio_read(uint8_t pin) { ... }
+----
+
+req42-tracer erkennt beide Syntaxen:
+
+* JavaDoc-Stil: `@req`, `@arch`, `@aspice` in `/** ... */`-Blöcken
+* Inline-Stil: `req:`, `arch:` in `/* ... */`-Blöcken
+
+=== Schritt 3 — AsciiDoc-Architekturblock
+
+Im `[arch]`-Block kann `impl=` auch manuell gesetzt werden (überschreibt die automatische Erkennung aus dem C-Code):
+
+[source,asciidoc]
+----
+[arch,id=comp.hal.gpio,req=SWR-GPIO-001,aspice=SWE.2,
+ impl=src/hal/gpio.c:gpio_init:23]
+== GPIO Hardware Abstraction Layer
+----
+
+Das Format `Datei:Funktion:Zeile` erzeugt im HTML-Report einen klickbaren Link zum GitHub-Quellcode.
+
+=== Schritt 4 — Vollständige Kette prüfen
+
+[source,bash]
+----
+req42-tracer trace --format=markdown
+req42-tracer gaps
+req42-tracer aspice
+----
+
+=== Validation: Dateipfade prüfen
+
+Die Regel `impl-file-not-found` prüft ob alle `impl=`-Dateipfade auf dem Dateisystem existieren:
+
+[source,yaml]
+----
+rules:
+  impl-file-not-found: error
+----
+
+---
+
 == CI/CD Integration
 
 === GitHub Actions example

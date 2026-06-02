@@ -207,11 +207,11 @@ req42-tracer enforces the full SWE.1–SWE.6 traceability chain:
 | Link | Attribute | ASPICE | Required | Example
 | `[req]` → `[arch]` | `req=` on `[arch]` | SWE.2 BP4 | ✅ | `[arch,req=SWR-001]`
 | `[arch]` → `[dsn]` | `arch=` on `[dsn]` | SWE.3 BP4 | optional | `[dsn,arch=comp.parser]`
-| `[arch]`/`[dsn]` → impl | `impl=` | SWE.2/SWE.3 BP5 | ✅ | `impl=src/internal/parser/`
+| `[arch]`/`[dsn]` → impl | `impl=` | SWE.2/SWE.3 BP5 | ✅ | `impl=src/hal/gpio.c:gpio_init:23`
 | `[dsn]` → Unit Test | `dsn=` + `aspice=SWE.4` | SWE.4 BP4 | ✅ | `[test-spec,dsn=comp.parser.tokenizer,aspice=SWE.4]`
 | `[arch]` → Integration Test | `arch=` + `aspice=SWE.5` | SWE.5 BP4 | ✅ | `[test-spec,arch=comp.parser,aspice=SWE.5]`
 | `[req]` → SW Qualification Test | `req=` + `aspice=SWE.6` | SWE.6 BP4 | ✅ | `[test-spec,req=SWR-001,aspice=SWE.6]`
-| `[test-spec]` → TestResult | JUnit/go-test | SWE.4/5/6 BP5 | ✅ | CI artifact
+| `[test-spec]` → TestResult | JUnit/Unity/CUnit XML | SWE.4/5/6 BP5 | ✅ | CI artifact
 |===
 
 === Attribute Placement
@@ -226,6 +226,43 @@ req42-tracer enforces the full SWE.1–SWE.6 traceability chain:
 | `aspice=` | all block types | —
 | `derives=` | `[req]` | —
 |===
+
+=== impl= Formate
+
+Das `impl=`-Attribut gehört zum `[arch]`- oder `[dsn]`-Block und verknüpft die Architektur mit der Implementierung (ASPICE SWE.3 BP5).
+
+[cols="2,3,2",options="header"]
+|===
+| Format | Beispiel | Bedeutung
+| Go-Package | `impl=src/internal/parser` | Go-Paketpfad
+| Datei | `impl=src/hal/gpio.c` | C/H-Quelldatei
+| Datei:Funktion | `impl=src/hal/gpio.c:gpio_init` | Funktion in Datei
+| Datei:Funktion:Zeile | `impl=src/hal/gpio.c:gpio_init:23` | Exakte Zeile — klickbarer Link im HTML-Report wenn `source-base-url` gesetzt
+|===
+
+Der HTML-Report generiert einen klickbaren GitHub-Link wenn in `.req42.yaml` konfiguriert:
+
+[source,yaml]
+----
+reports:
+  html:
+    source-base-url: "https://github.com/org/repo/blob/master"
+----
+
+C-Quellcode-Annotationen (automatische `impl=`-Generierung via `c-sources` in `.req42.yaml`):
+
+[source,c]
+----
+/**
+ * @req SWR-GPIO-001
+ * @arch comp.hal.gpio
+ * @aspice SWE.3
+ */
+void gpio_init(uint8_t pin, gpio_direction_t dir) { ... }
+
+/* req: SWR-GPIO-002, arch: comp.hal.gpio */
+int gpio_read(uint8_t pin) { ... }
+----
 
 === Complete Example (full chain)
 

@@ -1,0 +1,17 @@
+<TestRun>
+  <TestResult>
+    <TestCase name="test_gpio_init">
+      <TestName>test_gpio_init</TestName>
+      <SourceFile>test/test_gpio.c</SourceFile>
+      <SourceLine>42</SourceLine>
+      <Message>OK</Message>
+    </TestCase>
+    <TestCase name="test_gpio_read_fails">
+      <TestName>test_gpio_read_fails</TestName>
+      <SourceFile>test/test_gpio.c</SourceFile>
+      <SourceLine>57</SourceLine>
+      <Message>Expected 1 Was 0</Message>
+    </TestCase>
+  </TestResult>
+  <Summary><Tests>2</Tests><Failures>1</Failures><Ignored>0</Ignored></Summary>
+</TestRun>

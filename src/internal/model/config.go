@@ -13,6 +13,7 @@ type Config struct {
 	Projects       map[string]*ProjectConfig `yaml:"projects"`
 	DefaultProject string                    `yaml:"default-project"` // optional; derived from first projects key if empty
 	GoSrcDir       string                    `yaml:"go-src-dir"`      // optional; root dir scanned for *_test.go annotations
+	CSources       []CSourceConfig           `yaml:"c-sources"`       // optional; C/H dirs scanned for @req/@arch annotations
 	Bausteinsicht  struct {
 		Model string `yaml:"model"`
 	} `yaml:"bausteinsicht"`
@@ -32,11 +33,17 @@ type Config struct {
 			IncludeMatrix   bool   `yaml:"include-matrix"`
 			IncludeASPICE   bool   `yaml:"include-aspice"`
 			Theme           string `yaml:"theme"`
+			SourceBaseURL   string `yaml:"source-base-url"` // base URL for clickable impl= links (e.g. GitHub blob URL)
 		} `yaml:"html"`
 		CLI struct {
 			Format string `yaml:"format"` // text, markdown, json
 		} `yaml:"cli"`
 	} `yaml:"reports"`
+}
+
+// CSourceConfig configures a set of C/H source directories to scan for traceability annotations.
+type CSourceConfig struct {
+	Paths []string `yaml:"paths"` // directories containing .c/.h files
 }
 
 // TestResultSource configures a single test result input.

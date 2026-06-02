@@ -1038,6 +1038,21 @@ const HTMLTemplate = `<!DOCTYPE html>
         const gapsData = <!--GAPS_DATA_JSON-->;
         const elementsData = <!--ELEMENTS_DATA_JSON-->;
         const coverageData = <!--COVERAGE_DATA_JSON-->;
+        const SOURCE_BASE_URL = "<!--SOURCE_BASE_URL-->";
+
+        // Returns an HTML string for an impl= value: clickable link when SOURCE_BASE_URL is set.
+        function renderImplCell(implVal) {
+            if (!implVal) return '<span class="missing-impl">—</span>';
+            const parts = implVal.split(':');
+            const isFile = parts[0].includes('.');
+            if (isFile && SOURCE_BASE_URL) {
+                const file = parts[0];
+                const line = parts[2] ? parseInt(parts[2], 10) : 0;
+                const href = SOURCE_BASE_URL.replace(/\/$/, '') + '/' + file + (line ? '#L' + line : '');
+                return '<a href="' + escHtml(href) + '" target="_blank" rel="noopener"><code>' + escHtml(implVal) + '</code></a>';
+            }
+            return '<code>' + escHtml(implVal) + '</code>';
+        }
 
         // Global variables for filtering
         let globalNode = null;
@@ -1402,7 +1417,7 @@ const HTMLTemplate = `<!DOCTYPE html>
                 let metaHTML = '';
                 const meta = d.metadata || {};
                 // Show impl= for requirement and arch nodes
-                if (meta.impl) metaHTML += '<strong>impl:</strong> <code>' + escHtml(meta.impl) + '</code><br>';
+                if (meta.impl) metaHTML += '<strong>impl:</strong> ' + renderImplCell(meta.impl) + '<br>';
                 // Show result status for test-spec nodes
                 if (d.type === 'test-spec' && meta.result_status) {
                     const badge = meta.result_status === 'pass' ? '🟢 pass' : (meta.result_status === 'fail' ? '🔴 fail' : '🟡 missing');
@@ -1879,7 +1894,7 @@ const HTMLTemplate = `<!DOCTYPE html>
 
                 // impl= column
                 const implVal = row.Impl || '';
-                html += '<td class="impl-cell" title="' + escHtml(implVal) + '">' + (implVal ? '<code>' + escHtml(implVal) + '</code>' : '<span class="missing-impl">—</span>') + '</td>';
+                html += '<td class="impl-cell" title="' + escHtml(implVal) + '">' + renderImplCell(implVal) + '</td>';
 
                 // Coverage badge: 🟢 pass / 🟡 missing / 🔴 fail
                 const trStatus = row.TestResultStatus || 'missing';

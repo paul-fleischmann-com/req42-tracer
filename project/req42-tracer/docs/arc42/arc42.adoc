@@ -273,6 +273,33 @@ and Go slash-separated package paths via `shortPackage()`.
 Dispatches to format-specific parsers via `Loader.Load()` and bulk-loads
 all configured test sources via `LoadAll()`.
 
+[arch,id=comp.testresult.unity,parent=comp.testresult,aspice=SWE.3,impl=src/internal/testresult/unity.go,req=SWR-UNITY-PARSER-001]
+==== Unity XML Parser
+
+Parses Unity test-runner XML output format into TestResult objects.
+Used for Embedded/AUTOSAR C unit tests. Format key: `unity`.
+
+[arch,id=comp.testresult.cunit,parent=comp.testresult,aspice=SWE.3,impl=src/internal/testresult/cunit.go,req=SWR-CUNIT-PARSER-001]
+==== CUnit Automated XML Parser
+
+Parses CUnit `CUnitAutomated.xml` output into TestResult objects.
+Handles `<CUNIT_RUN_TEST_SUCCESS>` and `<CUNIT_RUN_TEST_FAILURE>` elements. Format key: `cunit`.
+
+=== 5.5.1 Level 2 — C-Source Parser
+
+[arch,id=comp.parser.c,parent=comp.parser,aspice=SWE.3,impl=src/internal/parser/cparser.go,req=SWR-C-PARSER-001]
+==== C-Quellcode-Parser
+
+Walks configured `c-sources` directories, extracts `@req`, `@arch`, `@aspice` and
+inline `req:`/`arch:` annotations from `.c`/`.h` files, and returns a map of
+`archElementID → file:func:line` impl-ref patches applied via `Builder.ApplyImplRefs()`.
+
+[arch,id=comp.model.implref,parent=comp.model,aspice=SWE.3,impl=src/internal/model/impl.go,req=SWR-IMPL-REF-001]
+==== ImplRef Model
+
+`ParseImplRef(s)` parses all four `impl=` formats (Go package, file, file:func, file:func:line).
+`ImplRef.ImplLink(baseURL)` generates a GitHub blob URL. Used by HTML report and validation rule.
+
 === 5.6 Level 2 — LSP Subcomponents
 
 [arch,id=comp.lsp.complete,parent=comp.lsp,aspice=SWE.3,impl=internal/lsp/complete.go,req=REQ-LSP-001]

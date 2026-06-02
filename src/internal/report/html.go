@@ -86,6 +86,10 @@ func (hr *HTMLReporter) GenerateReport() error {
 		}
 	}
 
+	// Inject source-base-url as a JS constant so impl= links become clickable.
+	sourceBaseURL := hr.config.Reports.HTML.SourceBaseURL
+	sourceBaseURLJS := "\"" + strings.ReplaceAll(sourceBaseURL, `"`, `\"`) + "\""
+
 	// Generate HTML by replacing placeholders in template
 	htmlContent := strings.ReplaceAll(HTMLTemplate, "<!--GRAPH_DATA_JSON-->", string(graphJSON))
 	htmlContent = strings.ReplaceAll(htmlContent, "<!--MATRIX_DATA_JSON-->", string(matrixJSON))
@@ -93,6 +97,7 @@ func (hr *HTMLReporter) GenerateReport() error {
 	htmlContent = strings.ReplaceAll(htmlContent, "<!--GAPS_DATA_JSON-->", string(gapsJSON))
 	htmlContent = strings.ReplaceAll(htmlContent, "<!--ELEMENTS_DATA_JSON-->", string(elementsJSON))
 	htmlContent = strings.ReplaceAll(htmlContent, "<!--COVERAGE_DATA_JSON-->", string(coverageJSON))
+	htmlContent = strings.ReplaceAll(htmlContent, "\"<!--SOURCE_BASE_URL-->\"", sourceBaseURLJS)
 
 	// Write HTML file
 	if err := os.WriteFile(hr.outputPath, []byte(htmlContent), 0644); err != nil {

@@ -29,6 +29,10 @@ func (l *Loader) Load(filePath, format string) ([]*model.TestResult, error) {
 		return ParseJUnit(filePath, l.project, l.platform)
 	case "go-test", "go-test-json":
 		return ParseGoTest(filePath, l.project, l.platform)
+	case "unity":
+		return ParseUnity(filePath, l.project, l.platform)
+	case "cunit":
+		return ParseCUnit(filePath, l.project, l.platform)
 	default:
 		return nil, fmt.Errorf("unsupported test result format: %s", format)
 	}

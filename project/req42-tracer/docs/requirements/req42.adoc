@@ -465,6 +465,83 @@ Acceptance Criteria:
 - Each example follows stdin/stdout JSON protocol
 - Each example is executable and includes usage comment
 
+[req,id=SWR-C-PARSER-001,version=1,priority=high,aspice=SWE.1,
+ status=approved,reviewed-by=paulefl,reviewed-date=2026-06-02]
+== System shall parse traceability markers from C/H source files
+
+[test-spec,id=TS-C-PARSER-001,req=SWR-C-PARSER-001,aspice=SWE.4-BP4]
+====
+Test: @req, @arch, @aspice and inline req:/arch: markers in .c/.h files are extracted and applied as impl= refs to arch elements
+====
+
+The system shall scan C/H source directories (configured via `c-sources:` in `.req42.yaml`) for `@req`, `@arch`, `@aspice` comment annotations and automatically set `impl=<file>:<func>:<line>` on the matching arch elements in the traceability graph.
+
+Supported syntax:
+
+- JavaDoc-style: `@req`, `@arch`, `@aspice` tags in `/** ... */` blocks
+- Inline style: `req:`, `arch:` in `/* ... */` single-line comments
+
+Acceptance Criteria:
+
+- `@req SWR-XXX` and `@arch comp.X` markers in `.c`/`.h` files are recognized
+- The function name and line number following the comment are captured
+- impl= is set on the matching `[arch]` element in the graph
+- No annotation is created for plain comments without traceability tags
+
+[req,id=SWR-UNITY-PARSER-001,version=1,priority=high,aspice=SWE.1,
+ status=approved,reviewed-by=paulefl,reviewed-date=2026-06-02]
+== System shall parse Unity XML test result files
+
+[test-spec,id=TS-UNITY-PARSER-001,req=SWR-UNITY-PARSER-001,aspice=SWE.4-BP4]
+====
+Test: Unity XML files are parsed into TestResult objects with correct pass/fail status
+====
+
+The system shall support Unity's test-runner XML output format (format key: `unity` in `.req42.yaml`) in addition to JUnit and go-test-json.
+
+Acceptance Criteria:
+
+- Unity XML is parsed to `TestResult` objects with correct `Status` (passed/failed)
+- Failed tests include the error message from `<Message>`
+- Project and platform are set from the loader configuration
+
+[req,id=SWR-CUNIT-PARSER-001,version=1,priority=high,aspice=SWE.1,
+ status=approved,reviewed-by=paulefl,reviewed-date=2026-06-02]
+== System shall parse CUnit Automated XML test result files
+
+[test-spec,id=TS-CUNIT-PARSER-001,req=SWR-CUNIT-PARSER-001,aspice=SWE.4-BP4]
+====
+Test: CUnit XML files (CUnitAutomated.xml) are parsed into TestResult objects with correct pass/fail status
+====
+
+The system shall support CUnit Automated XML output format (format key: `cunit` in `.req42.yaml`).
+
+Acceptance Criteria:
+
+- Successes and failures are parsed from `<CUNIT_RUN_TEST_SUCCESS>` / `<CUNIT_RUN_TEST_FAILURE>`
+- Suite name is used as package, test name as TestName
+- Failed tests include the assertion condition as Error
+
+[req,id=SWR-IMPL-REF-001,version=1,priority=high,aspice=SWE.1,
+ status=approved,reviewed-by=paulefl,reviewed-date=2026-06-02]
+== System shall support file:func:line format for impl= attributes
+
+[test-spec,id=TS-IMPL-REF-001,req=SWR-IMPL-REF-001,aspice=SWE.4-BP4]
+====
+Test: impl= values in file:func:line format are parsed correctly and rendered as clickable links in HTML report
+====
+
+The `impl=` attribute on `[arch]` and `[dsn]` blocks shall support four formats: Go package path, file-only, file:function, file:function:line. When `source-base-url` is configured, file-based impl= values generate a clickable GitHub link in the HTML report.
+
+Additionally, `req42-tracer validate` shall flag impl= references to non-existent files via the `impl-file-not-found` rule.
+
+Acceptance Criteria:
+
+- All four formats are parsed correctly by `ParseImplRef`
+- `ImplLink(baseURL)` generates correct `file#LN` URL
+- HTML report renders clickable links when `source-base-url` is set
+- `impl-file-not-found` validation rule flags missing files
+
 == Open Questions & Future Phases
 
 [NOTE]
