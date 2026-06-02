@@ -31,7 +31,7 @@ jobs:
 
       - name: Install Mermaid CLI and render diagrams as SVG
         run: |
-          npm install -g @mermaid-js/mermaid-cli
+          npm install -g @mermaid-js/mermaid-cli@10.9.1
           cd project/req42-tracer
           ./scripts/generate-diagrams.sh --include svg
 
