@@ -19,7 +19,7 @@ const sampleJUnit = `<?xml version="1.0" encoding="UTF-8"?>
   </testcase>
 </testsuite>`
 
-// [test-spec,id=TS-TR-001,req="REQ-TESTING-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-TR-001,req="REQ-TESTING-001",dsn=comp.testresult.junit,aspice=SWE.4-BP4]
 // TestParseJUnit verifies that JUnit XML is correctly parsed into TestResult objects.
 func TestParseJUnit(t *testing.T) {
 	f := writeTempXML(t, sampleJUnit)
@@ -32,7 +32,7 @@ func TestParseJUnit(t *testing.T) {
 	}
 }
 
-// [test-spec,id=TS-TR-002,req="REQ-TESTING-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-TR-002,req="REQ-TESTING-001",dsn=comp.testresult.junit,aspice="SWE.5.BP3"]
 // TestParseJUnit_Statuses verifies that pass/fail/skipped statuses are correctly assigned.
 func TestParseJUnit_Statuses(t *testing.T) {
 	f := writeTempXML(t, sampleJUnit)

@@ -59,7 +59,7 @@ func writeMockPluginFailing(t *testing.T) string {
 	return path
 }
 
-// [test-spec,id=TS-PLUG-001,req="REQ-PLUGIN-001",aspice="SWE.4.BP2"]
+// [test-spec,id=TS-PLUG-001,req="REQ-PLUGIN-001",dsn=comp.plugin.runner,aspice="SWE.4.BP2"]
 // TestRunTestResultParser verifies a test-result-parser plugin is called and results parsed.
 func TestRunTestResultParser(t *testing.T) {
 	output := `[{"id":"pkg::TestFoo","test_name":"TestFoo","package":"pkg","status":"passed","duration":0.042}]`

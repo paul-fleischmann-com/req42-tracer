@@ -28,7 +28,7 @@ func testGraph() *model.TraceabilityGraph {
 	}
 }
 
-// [test-spec,id=TS-LSP-004,req="REQ-LSP-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-LSP-004,req="REQ-LSP-001",dsn=comp.lsp.complete,aspice=SWE.4-BP4]
 // TestDetectContext verifies attribute-context detection from line prefixes.
 func TestDetectContext(t *testing.T) {
 	cases := []struct {
@@ -56,7 +56,7 @@ func TestDetectContext(t *testing.T) {
 	}
 }
 
-// [test-spec,id=TS-LSP-005,req="REQ-LSP-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-LSP-005,req="REQ-LSP-001",dsn=comp.lsp.complete,aspice="SWE.5.BP3"]
 // TestBuildCompletions_Req verifies req= completions return all requirement IDs.
 func TestBuildCompletions_Req(t *testing.T) {
 	g := testGraph()

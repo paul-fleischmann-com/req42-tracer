@@ -45,7 +45,7 @@ const bausteinsichtWithComments = `{
 	}
 }`
 
-// [test-spec,id=TS-PARSE-021,req="REQ-PARSE-002",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-PARSE-021,req="REQ-PARSE-002",dsn=comp.parser.jsonc,aspice=SWE.4-BP4]
 // TestBausteinsichtParser_Parse verifies that architecture.jsonc is parsed into arch elements.
 func TestBausteinsichtParser_Parse(t *testing.T) {
 	f := writeBausteinsicht(t, sampleBausteinsicht)
@@ -66,7 +66,7 @@ func TestBausteinsichtParser_Parse(t *testing.T) {
 	}
 }
 
-// [test-spec,id=TS-PARSE-022,req="REQ-PARSE-002",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-PARSE-022,req="REQ-PARSE-002",dsn=comp.parser.jsonc,aspice="SWE.5.BP3"]
 // TestBausteinsichtParser_Attributes verifies that type and technology attributes are set.
 func TestBausteinsichtParser_Attributes(t *testing.T) {
 	f := writeBausteinsicht(t, sampleBausteinsicht)

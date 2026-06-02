@@ -40,7 +40,7 @@ func hoverGraph() *model.TraceabilityGraph {
 	}
 }
 
-// [test-spec,id=TS-LSP-010,req="REQ-LSP-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-LSP-010,req="REQ-LSP-001",dsn=comp.lsp.hover,aspice=SWE.4-BP4]
 // TestDetectHoverValue verifies cursor-position detection of attribute values.
 func TestDetectHoverValue(t *testing.T) {
 	cases := []struct {
@@ -84,7 +84,7 @@ func TestDetectHoverValue(t *testing.T) {
 	}
 }
 
-// [test-spec,id=TS-LSP-011,req="REQ-LSP-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-LSP-011,req="REQ-LSP-001",dsn=comp.lsp.hover,aspice="SWE.5.BP3"]
 // TestBuildHoverContent_Req verifies hover content for a req= attribute value.
 func TestBuildHoverContent_Req(t *testing.T) {
 	g := hoverGraph()

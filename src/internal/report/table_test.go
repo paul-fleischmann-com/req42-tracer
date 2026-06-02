@@ -35,7 +35,7 @@ func buildReportGraph() *graph.Analyzer {
 	return graph.NewAnalyzer(g)
 }
 
-// [test-spec,id=TS-RPT-001,req="REQ-REPORT-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-RPT-001,req="REQ-REPORT-001",dsn=comp.report.table,aspice=SWE.4-BP4]
 // TestTableReporter_TraceabilityMatrix_Text verifies text format traceability matrix output.
 func TestTableReporter_TraceabilityMatrix_Text(t *testing.T) {
 	tr := NewTableReporter(buildReportGraph(), "text")
@@ -48,7 +48,7 @@ func TestTableReporter_TraceabilityMatrix_Text(t *testing.T) {
 	}
 }
 
-// [test-spec,id=TS-RPT-002,req="REQ-REPORT-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-RPT-002,req="REQ-REPORT-001",dsn=comp.report.table,aspice="SWE.5.BP3"]
 // TestTableReporter_TraceabilityMatrix_Markdown verifies markdown format output.
 func TestTableReporter_TraceabilityMatrix_Markdown(t *testing.T) {
 	tr := NewTableReporter(buildReportGraph(), "markdown")

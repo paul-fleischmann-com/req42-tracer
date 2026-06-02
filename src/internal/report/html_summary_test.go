@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// [test-spec,id=TS-RPT-049,req="REQ-REPORT-001",aspice="SWE.4.BP2"]
+// [test-spec,id=TS-RPT-049,req="REQ-REPORT-001",dsn=comp.report.html,aspice="SWE.4.BP2"]
 // TestSummaryHTMLHeader verifies the header contains DOCTYPE and CSS.
 func TestSummaryHTMLHeader(t *testing.T) {
 	h := summaryHTMLHeader()

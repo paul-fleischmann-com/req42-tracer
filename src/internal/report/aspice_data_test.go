@@ -1,11 +1,11 @@
 package report
 
-// [test-spec,id=TS-RPT-001,req="REQ-RPT-010",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-RPT-001,req="REQ-RPT-010",dsn=comp.report.aspice,aspice=SWE.4-BP4]
 // Test: BuildASPICEDashboardData mit minimalen Graph-Daten
 // Verifies that ASPICE dashboard data is built correctly from a traceability graph.
 // [end]
 
-// [test-spec,id=TS-RPT-002,req="REQ-RPT-010",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-RPT-002,req="REQ-RPT-010",dsn=comp.report.aspice,aspice="SWE.5.BP3"]
 // Test: BuildASPICEDashboardData mit leeren Prozesslisten
 // Verifies that empty process configuration falls back to default processes.
 // [end]
@@ -61,7 +61,7 @@ func makeTestGraph() *model.TraceabilityGraph {
 	}
 }
 
-// [test-spec,id=TS-RPT-036,req="REQ-ASPICE-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-RPT-036,req="REQ-ASPICE-001",dsn=comp.report.aspice,aspice="SWE.5.BP3"]
 // TestBuildASPICEDashboardData_Basic verifies ASPICE dashboard data is built from a traceability graph.
 func TestBuildASPICEDashboardData_Basic(t *testing.T) {
 	g := makeTestGraph()

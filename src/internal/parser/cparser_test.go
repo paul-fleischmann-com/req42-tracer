@@ -19,7 +19,7 @@ func writeTempC(t *testing.T, content string) string {
 	return path
 }
 
-// [test-spec,id=TS-CPARSER-001,req="SWR-C-PARSER-001",aspice=SWE.4-BP4]
+// [test-spec,id=TS-CPARSER-001,req="SWR-C-PARSER-001",dsn=comp.parser.c,aspice=SWE.4-BP4]
 // C parser extracts @req and @arch from JavaDoc-style block comments
 func TestParseCFile_JavaDocStyle(t *testing.T) {
 	src := `/**

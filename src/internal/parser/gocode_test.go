@@ -1,6 +1,6 @@
 package parser
 
-// [test-spec,id=TS-GOCODE-001,req=REQ-PARSE-002,aspice=SWE.4-BP3]
+// [test-spec,id=TS-GOCODE-001,req=REQ-PARSE-002,dsn=comp.parser.gocode,aspice=SWE.4-BP3]
 // TestParseGoTestFile_ExtractsTestCode verifies that [test-spec] comments above
 // func Test* are parsed into TestCode entries with correct spec linkage.
 // [end]
@@ -39,7 +39,7 @@ func TestBar(t *testing.T) {
 }
 `
 
-// [test-spec,id=TS-GOCODE-010,req=REQ-PARSE-002,aspice=SWE.4-BP3]
+// [test-spec,id=TS-GOCODE-010,req=REQ-PARSE-002,dsn=comp.parser.gocode,aspice=SWE.4-BP3]
 // TestParseGoTestFile_ExtractsTestCode verifies [test-spec] comments above Test* funcs are parsed.
 func TestParseGoTestFile_ExtractsTestCode(t *testing.T) {
 	dir := t.TempDir()

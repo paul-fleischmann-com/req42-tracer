@@ -36,7 +36,7 @@ func godefGraph() *model.TraceabilityGraph {
 	}
 }
 
-// [test-spec,id=TS-LSP-016,req="REQ-LSP-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-LSP-016,req="REQ-LSP-001",dsn=comp.lsp.godef,aspice=SWE.4-BP4]
 // TestFindDefinition_Req verifies go-to-definition for a known requirement ID.
 func TestFindDefinition_Req(t *testing.T) {
 	g := godefGraph()
@@ -56,7 +56,7 @@ func TestFindDefinition_Req(t *testing.T) {
 	}
 }
 
-// [test-spec,id=TS-LSP-017,req="REQ-LSP-001",aspice="SWE.5.BP3"]
+// [test-spec,id=TS-LSP-017,req="REQ-LSP-001",dsn=comp.lsp.godef,aspice="SWE.5.BP3"]
 // TestFindDefinition_Arch verifies go-to-definition for a known arch element.
 func TestFindDefinition_Arch(t *testing.T) {
 	g := godefGraph()

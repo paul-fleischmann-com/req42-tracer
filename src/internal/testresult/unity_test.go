@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// [test-spec,id=TS-UNITY-001,req="SWR-UNITY-PARSER-001",aspice=SWE.4-BP4]
+// [test-spec,id=TS-UNITY-001,req="SWR-UNITY-PARSER-001",dsn=comp.testresult.unity,aspice=SWE.4-BP4]
 // ParseUnity correctly parses passed and failed test cases from Unity XML
 func TestParseUnity(t *testing.T) {
 	results, err := ParseUnity(filepath.Join("testdata", "unity_results.xml"), "test", "linux")

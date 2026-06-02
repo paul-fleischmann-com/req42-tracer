@@ -84,9 +84,29 @@ func parseGoTestFile(filePath, project string) ([]*model.TestSpec, []*model.Test
 					}
 				}
 			}
+			// Parse dsn= (comma-separated)
+			var dsns []string
+			if d := strings.Trim(attrs["dsn"], `"`); d != "" {
+				for _, v := range strings.Split(d, ",") {
+					if v = strings.TrimSpace(v); v != "" {
+						dsns = append(dsns, v)
+					}
+				}
+			}
+			// Parse arch= (comma-separated)
+			var archs []string
+			if a := strings.Trim(attrs["arch"], `"`); a != "" {
+				for _, v := range strings.Split(a, ",") {
+					if v = strings.TrimSpace(v); v != "" {
+						archs = append(archs, v)
+					}
+				}
+			}
 			pendingSpec = &model.TestSpec{
 				ID:         id,
 				Req:        reqs,
+				Dsn:        dsns,
+				Arch:       archs,
 				FilePath:   filePath,
 				LineNumber: lineNum,
 				Project:    project,
