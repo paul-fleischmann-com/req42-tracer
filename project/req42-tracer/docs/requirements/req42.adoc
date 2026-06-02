@@ -1,7 +1,7 @@
 = req42-tracer — Requirements (REQ42)
 
 :description: req42-tracer Requirements Tracing & ASPICE Compliance Tool
-:module: github.com/paulefl/req42-tracer
+:module: github.com/paul-fleischmann-com/req42-tracer
 
 == Overview
 

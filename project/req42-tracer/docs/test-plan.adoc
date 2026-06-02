@@ -10,7 +10,7 @@ test plan for req42-tracer, addressing ASPICE process areas SWE.5 (Integration
 and Integration Testing) and SWE.6 (Qualification Testing).
 
 **Tool under test:** `req42-tracer` CLI  +
-**Repository:** `github.com/paulefl/req42-tracer`  +
+**Repository:** `github.com/paul-fleischmann-com/req42-tracer`  +
 **Revision date:** 2026-05-31
 
 == 2. Test Strategy

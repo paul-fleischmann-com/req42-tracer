@@ -1,7 +1,7 @@
 = project — Architecture (ARC42)
 
 :description: REQ42 + ARC42 Project
-:module: https://github.com/paulefl/req42-tracer
+:module: https://github.com/paul-fleischmann-com/req42-tracer
 
 == 1. Introduction and Goals
 
